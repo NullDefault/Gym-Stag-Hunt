@@ -7,11 +7,12 @@ BACKGROUND_COLOR = (255, 185, 137)
 
 
 class Renderer:
-    def __init__(self, game_state, game_name, screen_size):
+    def __init__(self, game_state, game_name, screen_size, fps=3):
         # PyGame config
         pg.init()
         pg.display.set_caption(game_name)
-        self.clock = pg.time.Clock()
+        self._clock = pg.time.Clock()
+        self._fps = fps
         self._screen = pg.display.set_mode(screen_size)
         self._screen_size = tuple(map(sum, zip(screen_size, (-1, -1))))
         self._game_state = game_state
@@ -86,6 +87,10 @@ class Renderer:
     """
     Drawing Methods
     """
+    def render(self):
+        self._clock.tick(self._fps)
+        pg.display.flip()
+
     def _update_render(self):
         self._update_rects(self._game_state.ENTITY_POSITIONS)
         self._entity_layer.fill((0, 0, 0, 0))
@@ -95,8 +100,6 @@ class Renderer:
         self._screen.blit(self._background, (0, 0))
         self._screen.blit(self._grid_layer, (0, 0))
         self._screen.blit(self._entity_layer, (0, 0))
-
-        pg.display.flip()
 
         return np.flipud(np.rot90(pg.surfarray.array3d(pg.display.get_surface())))
 

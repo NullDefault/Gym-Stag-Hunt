@@ -6,22 +6,28 @@ import numpy as np
 
 from gym_stag_hunt.engine.renderer import Renderer
 
+LEFT = 0
+DOWN = 1
+RIGHT = 2
+UP = 3
+
 
 class Game:
     def __init__(self,
-                 game_name="OpenAI - Stag Hunt",
-                 grid_size=(5, 5),
-                 enable_render=True,
-                 screen_size=(600, 600),
-                 episodes_per_game=1000,
-                 stag_reward=5,
-                 forage_quantity=2,
-                 forage_reward=1,
-                 mauling_punishment=-5,
+                 game_name,
+                 grid_size,
+                 screen_size,
+                 obs_type,
+                 episodes_per_game,
+                 stag_reward,
+                 forage_quantity,
+                 forage_reward,
+                 mauling_punishment,
                  ):
+
         # Rendering
         self._renderer = None
-        self._enable_render = enable_render
+        self._obs_type = obs_type
 
         # Reinforcement Variables
         self._stag_reward = stag_reward
@@ -43,7 +49,7 @@ class Game:
         self.reset_entities()
 
         # If rendering is enabled, we will instantiate the rendering pipeline
-        if self._enable_render is True:
+        if obs_type == 'image':
             self._renderer = Renderer(game_state=self,
                                       game_name=game_name,
                                       screen_size=screen_size)
@@ -165,12 +171,16 @@ class Game:
             self._eps_to_go = self._eps_per_game
             self.reset_entities()
 
-        if self._enable_render:
+        obs = self.get_observation()
+
+        return obs, iteration_rewards, game_done
+
+    def get_observation(self):
+        if self._obs_type == 'image':
             obs = self.RENDERER.update()
         else:
             obs = self._coord_observation()
-
-        return obs, iteration_rewards, game_done
+        return obs
 
     def _coord_observation(self):
         plants = self.PLANTS
@@ -197,16 +207,16 @@ class Game:
 
         options = []
         if left:
-            options.append("LEFT")
-        if right:
-            options.append("RIGHT")
-        if up:
-            options.append("UP")
+            options.append(LEFT)
         if down:
-            options.append("DOWN")
+            options.append(DOWN)
+        if right:
+            options.append(RIGHT)
+        if up:
+            options.append(UP)
 
         if not options:
-            options = ["UP", "DOWN", "LEFT", "RIGHT"]
+            options = [LEFT, DOWN, RIGHT, UP]
 
         return self._move_entity(self.STAG, choice(options))
 
@@ -223,14 +233,14 @@ class Game:
         self.STAG = self._seek_agent(agent_to_seek)
 
     def _move_entity(self, entity_pos, action):
-        if action == 'UP':
-            return self._move_up(entity_pos)
-        elif action == 'DOWN':
-            return self._move_down(entity_pos)
-        elif action == 'LEFT':
+        if action == LEFT:
             return self._move_left(entity_pos)
-        elif action == 'RIGHT':
+        elif action == DOWN:
+            return self._move_down(entity_pos)
+        elif action == RIGHT:
             return self._move_right(entity_pos)
+        elif action == UP:
+            return self._move_up(entity_pos)
 
     def _reset_agents(self):
         self.A_AGENT = [0, 0]
