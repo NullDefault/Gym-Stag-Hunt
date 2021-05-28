@@ -17,6 +17,10 @@ def load_img(path):
     return image.load(path).convert_alpha()
 
 
+def get_icon():
+    return image.load(type_dict['stag'])
+
+
 class Entity(DirtySprite):
     def __init__(self, entity_type, cell_sizes, location):
         DirtySprite.__init__(self)

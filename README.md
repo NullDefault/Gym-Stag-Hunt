@@ -11,6 +11,11 @@ moves towards the nearest agent. At the end of the time step, if an agent is on 
 However, if both agents are on top of the stag, they both get +p reinforcement points. After a specified amount of
 time steps (default is 1000), the game is considered done and the environment will reset the position of its entities.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/NullDefault/gym-stag-hunt/master/gym_stag_hunt/assets/screenshot.png" />
+</p>
+
+
 # Installation
 
 ```bash

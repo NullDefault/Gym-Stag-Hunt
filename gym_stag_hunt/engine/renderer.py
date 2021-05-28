@@ -1,7 +1,7 @@
 import numpy as np
 import pygame as pg
 
-from gym_stag_hunt.engine.entity import Entity
+from gym_stag_hunt.engine.entity import Entity, get_icon
 
 BACKGROUND_COLOR = (255, 185, 137)
 
@@ -11,6 +11,7 @@ class Renderer:
         # PyGame config
         pg.init()
         pg.display.set_caption(game_name)
+        pg.display.set_icon(get_icon())
         self._clock = pg.time.Clock()
         self._fps = fps
         self._screen = pg.display.set_mode(screen_size)
@@ -64,6 +65,7 @@ class Renderer:
         try:
             pg.display.quit()
             pg.quit()
+            quit()
         except Exception as e:
             raise e
 
