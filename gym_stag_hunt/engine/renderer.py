@@ -109,7 +109,6 @@ class Renderer:
         try:
             pg.display.quit()
             pg.quit()
-            quit()
         except Exception as e:
             raise e
 
