@@ -12,7 +12,7 @@ However, if both agents are on top of the stag, they both get +p reinforcement p
 time steps (default is 1000), the game is considered done and the environment will reset the position of its entities.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/NullDefault/gym-stag-hunt/master/gym_stag_hunt/assets/screenshot.png" />
+  <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/screenshot.png?raw=true" />
 </p>
 
 
