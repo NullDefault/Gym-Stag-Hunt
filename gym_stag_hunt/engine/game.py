@@ -34,6 +34,7 @@ class Game:
                  grid_size,
                  screen_size,
                  obs_type,
+                 load_renderer,
                  episodes_per_game,
                  stag_reward,
                  forage_quantity,
@@ -76,7 +77,7 @@ class Game:
         self.reset_entities()                               # place the entities on the grid
 
         # If rendering is enabled, we will instantiate the rendering pipeline
-        if obs_type == 'image':
+        if obs_type == 'image' or load_renderer:
             # we don't want to import pygame if we aren't going to use it, so that's why this import is here
             from gym_stag_hunt.engine.renderer import Renderer
             self._renderer = Renderer(game=self, window_title=window_title, screen_size=screen_size)
@@ -501,3 +502,7 @@ class Game:
     @property
     def RENDERER(self):
         return self._renderer
+
+    @property
+    def COORD_OBS(self):
+        return self._coord_observation()

@@ -93,7 +93,7 @@ class Renderer:
         :return: A pixel array corresponding to the new game state.
         """
         try:
-            img_output = self._update_render()
+            img_output = self.update_render()
             self._controller_update()
         except Exception as e:
             self.quit()
@@ -140,10 +140,12 @@ class Renderer:
     """
     Drawing Methods
     """
-    def _update_render(self):
+    def update_render(self, return_observation=True):
         """
         Executes the logic side of rendering without actually drawing it to the screen. In other words, new pixel
         values are calculated for each layer/surface without them actually being redrawn.
+        :param return_observation: boolean saying if we are to (create and) return a numpy pixel array. The operation
+                                   is expensive so we don't want to do it needlessly.
         :return: A numpy array corresponding to the pixel state of the display after the render update.
         """
         self._update_rects(self._game.ENTITY_POSITIONS)
@@ -155,7 +157,8 @@ class Renderer:
         self._screen.blit(self._grid_layer, (0, 0))
         self._screen.blit(self._entity_layer, (0, 0))
 
-        return pg.surfarray.array3d(pg.display.get_surface())
+        if return_observation:
+            return pg.surfarray.array3d(pg.display.get_surface())
 
     def render_on_display(self):
         """

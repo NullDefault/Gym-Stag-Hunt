@@ -11,6 +11,7 @@ class StagHuntEnv(gym.Env):
                  grid_size=(5, 5),
                  screen_size=(600, 600),
                  obs_type='image',
+                 load_renderer=False,
                  episodes_per_game=1000,
                  stag_reward=5,
                  forage_quantity=2,
@@ -41,6 +42,7 @@ class StagHuntEnv(gym.Env):
                          grid_size=grid_size,
                          screen_size=screen_size,
                          obs_type=obs_type,
+                         load_renderer=load_renderer,
                          episodes_per_game=episodes_per_game,
                          stag_reward=stag_reward,
                          forage_quantity=forage_quantity,
@@ -84,21 +86,21 @@ class StagHuntEnv(gym.Env):
         self.done = False
         return self.game.get_observation()
 
-    def render(self, mode="human", obs=None, close=False):
+    def render(self, mode="human", obs=None):
         """
         :param obs: observation data (passed for coord observations so we dont have to run the function twice)
         :param mode: rendering mode
-        :param close: are we trying to close the render
         :return:
         """
-        if close and self.obs_type == 'image':
-            self.game.RENDERER.quit()
+        if self.obs_type == 'image':
+            if mode == "human":
+                self.game.RENDERER.render_on_display()
+            else:
+                print_matrix(self.game.COORD_OBS)
         else:
-            if self.obs_type == 'image':
-                if mode == "human":
-                    self.game.RENDERER.render_on_display()
-                else:
-                    print_matrix(self.game._coord_observation())
+            if self.game.RENDERER:
+                self.game.RENDERER.update_render(return_observation=False)
+                self.game.RENDERER.render_on_display()
             else:
                 if obs is None:
                     obs = self.game.get_observation().astype(int)
