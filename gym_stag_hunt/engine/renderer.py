@@ -155,7 +155,7 @@ class Renderer:
         self._screen.blit(self._grid_layer, (0, 0))
         self._screen.blit(self._entity_layer, (0, 0))
 
-        return np.flipud(np.rot90(pg.surfarray.array3d(pg.display.get_surface())))
+        return pg.surfarray.array3d(pg.display.get_surface())
 
     def render_on_display(self):
         """
