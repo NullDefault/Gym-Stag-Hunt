@@ -14,8 +14,8 @@ from gym_stag_hunt.engine.entity import Entity, get_gui_window_icon
 Drawing Colors
 """
 BACKGROUND_COLOR = (255, 185, 137)
-CLEAR            = (0, 0, 0, 0)
 GRID_LINE_COLOR  = (200, 150, 100, 200)
+CLEAR            = (0, 0, 0, 0)
 
 
 class Renderer:
@@ -157,13 +157,11 @@ class Renderer:
 
         # drawing the horizontal lines
         for y in range(self.GRID_H + 1):
-            pg.draw.line(self._grid_layer, GRID_LINE_COLOR, (0, y * self.CELL_H),
-                         (self.SCREEN_W, y * self.CELL_H))
+            pg.draw.line(self._grid_layer, GRID_LINE_COLOR, (0, y * self.CELL_H), (self.SCREEN_W, y * self.CELL_H))
 
         # drawing the vertical lines
         for x in range(self.GRID_W + 1):
-            pg.draw.line(self._grid_layer, GRID_LINE_COLOR, (x * self.CELL_W, 0),
-                         (x * self.CELL_W, self.SCREEN_H))
+            pg.draw.line(self._grid_layer, GRID_LINE_COLOR, (x * self.CELL_W, 0), (x * self.CELL_W, self.SCREEN_H))
 
     def _draw_entities(self):
         """

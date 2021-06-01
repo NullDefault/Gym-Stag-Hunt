@@ -12,10 +12,10 @@ from pygame.sprite import DirtySprite
 base_path = os.path.dirname(os.path.dirname(__file__))
 
 sprite_dict = {
-    'a_agent': os.path.join(base_path, 'assets/blue_agent.png'),
-    'b_agent': os.path.join(base_path, 'assets/red_agent.png'),
-    'stag': os.path.join(base_path, 'assets/stag.png'),
-    'plant': os.path.join(base_path, 'assets/plant_fruit.png'),
+    'a_agent':  os.path.join(base_path, 'assets/blue_agent.png'),
+    'b_agent':  os.path.join(base_path, 'assets/red_agent.png'),
+    'stag':     os.path.join(base_path, 'assets/stag.png'),
+    'plant':    os.path.join(base_path, 'assets/plant_fruit.png'),
 }
 
 

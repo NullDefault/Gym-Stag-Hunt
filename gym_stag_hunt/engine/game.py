@@ -220,8 +220,16 @@ class Game:
 
         # Move Entities
         self._move_stag()
-        self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves[0])
-        self.B_AGENT = self._move_entity(self.B_AGENT, agent_moves[1])
+
+        if isinstance(agent_moves, list):
+            self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves[0])
+            if len(agent_moves) > 1:
+                self.B_AGENT = self._move_entity(self.B_AGENT, agent_moves[1])
+            else:
+                self.B_AGENT = self._random_move(self.B_AGENT)
+        else:
+            self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves)
+            self.B_AGENT = self._random_move(self.B_AGENT)
 
         # Get Rewards
         iteration_rewards = self._calc_reward()
@@ -261,11 +269,7 @@ class Game:
                      S, P],   S, P],     S, P],    S, P],    S, P]],..]
                  Where A is A Agent, S is stag e.t.c
                  An actually printed matrix row will look like this:
-                 [[0 0 0 0]
-                  [0 0 1 0]
-                  [0 0 0 0]
-                  [0 0 0 0]
-                  [0 0 0 0]]
+                 [[0 0 0 0] [0 0 1 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
                  Which translates to there being a stag in the second column of this row
         """
         matrix = np.full((self._grid_size[0], self._grid_size[1], 4), False, dtype=bool)
