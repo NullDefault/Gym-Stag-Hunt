@@ -6,8 +6,26 @@ Contains everything pertaining to rendering the game (besides sprite code, which
 
 import numpy as np
 import pygame as pg
+import sys
 
 from gym_stag_hunt.engine.entity import Entity, get_gui_window_icon
+
+
+def print_matrix(matrix):
+    sys.stdout.write('╔════════════════════════════╗\n')
+    for row in matrix:
+        sys.stdout.write('║ ·')
+        for col in row:
+            cell = []
+            cell.append('A') if col[0] == 1 else cell.append(' ')
+            cell.append('B') if col[1] == 1 else cell.append(' ')
+            cell.append('S') if col[2] == 1 else cell.append(' ')
+            cell.append('P') if col[3] == 1 else cell.append(' ')
+            sys.stdout.write(''.join(cell) + '·')
+        sys.stdout.write(' ║')
+        sys.stdout.write('\n')
+    sys.stdout.write('╚════════════════════════════╝\n\r')
+    sys.stdout.flush()
 
 
 """
@@ -22,8 +40,7 @@ class Renderer:
     def __init__(self,
                  game,
                  window_title,
-                 screen_size,
-                 fps=3):
+                 screen_size):
         """
         :param game: Class-based representation of the game state. Feeds all the information necessary to the renderer
         :param window_title: What we set as the window caption
@@ -36,7 +53,6 @@ class Renderer:
         pg.display.set_caption(window_title)                                      # set the window caption
         pg.display.set_icon(get_gui_window_icon())                                # set the window icon
         self._clock = pg.time.Clock()                                             # create clock object
-        self._fps = fps                                                           # record the framerate as an attribute
         self._screen = pg.display.set_mode(screen_size)                           # instantiate virtual display
         self._screen_size = tuple(map(sum, zip(screen_size, (-1, -1))))           # record screen size as an attribute
         self._game = game                                                         # record game as an attribute
@@ -146,7 +162,6 @@ class Renderer:
         Actually draws the next frame.
         :return:
         """
-        self._clock.tick(self._fps)
         pg.display.flip()
 
     def _draw_grid(self):

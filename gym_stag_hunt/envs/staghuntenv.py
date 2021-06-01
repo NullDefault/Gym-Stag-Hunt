@@ -3,13 +3,10 @@ import numpy as np
 from gym.spaces import Discrete, Box
 
 from gym_stag_hunt.engine.game import Game
+from gym_stag_hunt.engine.renderer import print_matrix
 
 
 class StagHuntEnv(gym.Env):
-    metadata = {
-        "render.modes": ["human", "rgb_array"]
-    }
-
     def __init__(self,
                  grid_size=(5, 5),
                  screen_size=(600, 600),
@@ -36,6 +33,8 @@ class StagHuntEnv(gym.Env):
         self.obs_type = obs_type                                        # save attributes
         self.stag_reward = stag_reward
         self.forage_reward = forage_reward
+        self.mauling_punishment = mauling_punishment
+        self.reward_range = (mauling_punishment, stag_reward)
 
         window_title = "OpenAI Gym - Stag Hunt (%d x %d)" % grid_size
         self.game = Game(window_title=window_title,                     # create game representation
@@ -85,26 +84,27 @@ class StagHuntEnv(gym.Env):
         self.done = False
         return self.game.get_observation()
 
-    def render(self, mode="human", close=False):
+    def render(self, mode="human", obs=None, close=False):
         """
+        :param obs: observation data (passed for coord observations so we dont have to run the function twice)
         :param mode: rendering mode
         :param close: are we trying to close the render
         :return:
         """
-        if close:
-            if self.obs_type == 'image':
-                self.game.RENDERER.quit()
-        if self.obs_type == 'image':
-            if mode == "human":
-                self.game.RENDERER.render_on_display()
+        if close and self.obs_type == 'image':
+            self.game.RENDERER.quit()
         else:
-            obs = self.game.get_observation().astype(int)
-            if mode == "human":
-                for row in obs:
-                    for col in row:
-                        print(col, end=' ')
-                    print('\n')
-                print('-------------------------------------------------')
+            if self.obs_type == 'image':
+                if mode == "human":
+                    self.game.RENDERER.render_on_display()
+                else:
+                    print_matrix(self.game._coord_observation())
+            else:
+                if obs is None:
+                    obs = self.game.get_observation().astype(int)
+                else:
+                    obs = obs.astype(int)
+                print_matrix(obs)
 
     def close(self):
         """
@@ -116,10 +116,10 @@ class StagHuntEnv(gym.Env):
 
 
 if __name__ == "__main__":
-    env = StagHuntEnv(obs_type='image')
+    env = StagHuntEnv(obs_type='coords')
     env.reset()
-    for i in range(1000):
-        env.render()
+    for i in range(10000):
         obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
+        env.render(obs=obs, mode="human")
     env.close()
     quit()
