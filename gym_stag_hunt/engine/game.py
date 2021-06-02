@@ -14,10 +14,10 @@ import numpy as np
 """
 Possible Actions
 """
-LEFT = 0
-DOWN = 1
+LEFT  = 0
+DOWN  = 1
 RIGHT = 2
-UP = 3
+UP    = 3
 
 """
 Entity Keys
@@ -37,6 +37,8 @@ class Game:
                  load_renderer,
                  episodes_per_game,
                  stag_reward,
+                 stag_follows,
+                 run_away_after_maul,
                  forage_quantity,
                  forage_reward,
                  mauling_punishment,
@@ -48,31 +50,35 @@ class Game:
         :param obs_type: Can be 'image' for pixel-array based observations, or 'coords' for just the entity coordinates
         :param episodes_per_game: How many timesteps take place before we reset the entity positions.
         :param stag_reward: How much reinforcement the agents get for catching the stag
+        :param stag_follows: Should the stag seek out the nearest agent (true) or take a random move (false)
+        :param run_away_after_maul: Does the stag stay on the same cell after mauling an agent (true) or respawn (false)
         :param forage_quantity: How many plants will be placed on the board.
         :param forage_reward: How much reinforcement the agents get for harvesting a plant
         :param mauling_punishment: How much reinforcement the agents get for trying to catch a stag alone (MUST be neg.)
         """
 
-        # Rendering
-        self._renderer = None                               # placeholder renderer
-        self._obs_type = obs_type                           # record type of observation as attribute
+        # Config
+        self._renderer            = None                    # placeholder renderer
+        self._obs_type            = obs_type                # record type of observation as attribute
+        self._stag_follows        = stag_follows
+        self._run_away_after_maul = run_away_after_maul
 
         # Reinforcement Variables
-        self._stag_reward = stag_reward                     # record RL values as attributes
-        self._forage_quantity = forage_quantity
-        self._forage_reward = forage_reward
+        self._stag_reward        = stag_reward              # record RL values as attributes
+        self._forage_quantity    = forage_quantity
+        self._forage_reward      = forage_reward
         self._mauling_punishment = mauling_punishment
 
         # State Variables
         self._tagged_plants = []                            # harvested plants that need to be re-spawned
-        self._grid_size = grid_size                         # record grid dimensions as attribute
-        self._eps_to_go = episodes_per_game                 # state variable to keep track of how many eps till reset
-        self._eps_per_game = episodes_per_game              # record episodes per game as attribute
+        self._grid_size     = grid_size                     # record grid dimensions as attribute
+        self._eps_to_go     = episodes_per_game             # state variable to keep track of how many eps till reset
+        self._eps_per_game  = episodes_per_game             # record episodes per game as attribute
 
         # Entity Positions
-        self._a_pos = np.zeros(2, dtype=int)                # create empty tuples for all the entity positions
-        self._b_pos = np.zeros(2, dtype=int)
-        self._stag_pos = np.zeros(2, dtype=int)
+        self._a_pos      = np.zeros(2, dtype=int)           # create empty tuples for all the entity positions
+        self._b_pos      = np.zeros(2, dtype=int)
+        self._stag_pos   = np.zeros(2, dtype=int)
         self._plants_pos = []
         self.reset_entities()                               # place the entities on the grid
 
@@ -93,10 +99,10 @@ class Game:
         """
         new_plants = []
         for x in range(self._forage_quantity):
-            new_plants.append(self._place_plant())
+            new_plants.append(self._place_entity_in_unoccupied_cell())
         return new_plants
 
-    def _place_plant(self, existing_plants=None):
+    def _place_entity_in_unoccupied_cell(self, existing_plants=None):
         """
         Places an individual plant on a position on the grid currently unoccupied by anything.
         :param existing_plants: The positions of the other plants
@@ -137,7 +143,7 @@ class Game:
         """
         plants = self.PLANTS
         for eaten_plant in self._tagged_plants:
-            plants[eaten_plant] = self._place_plant(existing_plants=plants)
+            plants[eaten_plant] = self._place_entity_in_unoccupied_cell(existing_plants=plants)
         self._tagged_plants = []
         self.PLANTS = plants
 
@@ -237,7 +243,9 @@ class Game:
 
         # Reset prey if it was caught
         if iteration_rewards == (self._stag_reward, self._stag_reward):
-            self.STAG = self.GRID_W - 2, self.GRID_H - 1
+            self.STAG = self._place_entity_in_unoccupied_cell()
+        elif self._run_away_after_maul and self._mauling_punishment in iteration_rewards:
+            self.STAG = self._place_entity_in_unoccupied_cell()
         elif self._forage_reward in iteration_rewards:
             self._respawn_plants()
 

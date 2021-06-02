@@ -4,7 +4,6 @@ Renderer
 Contains everything pertaining to rendering the game (besides sprite code, which is in entity.py).
 """
 
-import numpy as np
 import pygame as pg
 import sys
 
@@ -45,17 +44,16 @@ class Renderer:
         :param game: Class-based representation of the game state. Feeds all the information necessary to the renderer
         :param window_title: What we set as the window caption
         :param screen_size: The size of the virtual display on which we will be rendering stuff on
-        :param fps: How many frames per second to play when fully rendering an episode
         """
 
         # PyGame config
         pg.init()                                                                 # initialize pygame
         pg.display.set_caption(window_title)                                      # set the window caption
         pg.display.set_icon(get_gui_window_icon())                                # set the window icon
-        self._clock = pg.time.Clock()                                             # create clock object
-        self._screen = pg.display.set_mode(screen_size)                           # instantiate virtual display
+        self._clock       = pg.time.Clock()                                       # create clock object
+        self._screen      = pg.display.set_mode(screen_size)                      # instantiate virtual display
         self._screen_size = tuple(map(sum, zip(screen_size, (-1, -1))))           # record screen size as an attribute
-        self._game = game                                                         # record game as an attribute
+        self._game        = game                                                  # record game as an attribute
 
         # Create a background                                                     # here we create and fill all the
         self._background = pg.Surface(self._screen.get_size()).convert()          # render surfaces
@@ -68,14 +66,11 @@ class Renderer:
         self._entity_layer.fill(CLEAR)
 
         # Load sprites for the game objects
-        cell_sizes = self.CELL_SIZE                                              # the entities are instantiated here
-        entity_positions = self._game.ENTITY_POSITIONS
-        self._a_sprite = Entity(entity_type='a_agent', cell_sizes=cell_sizes,
-                                location=entity_positions['a_agent'])
-        self._b_sprite = Entity(entity_type='b_agent', cell_sizes=cell_sizes,
-                                location=entity_positions['b_agent'])
-        self._stag_sprite = Entity(entity_type='stag', cell_sizes=cell_sizes,
-                                   location=entity_positions['stag'])
+        cell_sizes          = self.CELL_SIZE                                       # the entities are instantiated here
+        entity_positions    = self._game.ENTITY_POSITIONS
+        self._a_sprite      = Entity(entity_type='a_agent', cell_sizes=cell_sizes, location=entity_positions['a_agent'])
+        self._b_sprite      = Entity(entity_type='b_agent', cell_sizes=cell_sizes, location=entity_positions['b_agent'])
+        self._stag_sprite   = Entity(entity_type='stag', cell_sizes=cell_sizes, location=entity_positions['stag'])
         self._plant_sprites = self._make_plant_entities(entity_positions['plants'])
 
         # pre-draw the grid
@@ -88,13 +83,16 @@ class Renderer:
     Controller Methods
     """
 
-    def update(self):
+    def update(self, return_observation=True):
         """
         :return: A pixel array corresponding to the new game state.
         """
         try:
-            img_output = self.update_render()
-            self._controller_update()
+            img_output = self._update_render(return_observation=return_observation)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    self.quit()
+
         except Exception as e:
             self.quit()
             raise e
@@ -109,17 +107,9 @@ class Renderer:
         try:
             pg.display.quit()
             pg.quit()
+            quit()
         except Exception as e:
             raise e
-
-    def _controller_update(self):
-        """
-        Checks for events (by which we mean checks if the window has been closed and quits game if it has been)
-        :return:
-        """
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                self.quit()
 
     """
     Misc
@@ -139,7 +129,7 @@ class Renderer:
     """
     Drawing Methods
     """
-    def update_render(self, return_observation=True):
+    def _update_render(self, return_observation=True):
         """
         Executes the logic side of rendering without actually drawing it to the screen. In other words, new pixel
         values are calculated for each layer/surface without them actually being redrawn.
