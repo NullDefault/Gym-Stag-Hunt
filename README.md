@@ -16,13 +16,16 @@ time steps (default is 1000), the game is considered done and the environment wi
 </p>
 
 ### Config Parameters
-**grid_size**     = (N, M) = (5, 5) : 
+**param** = format = default value:
+> Description
+
+**grid_size** = (N, M) = (5, 5): 
 > Dimensions of the simulation grid. M x N should be equal to at least 3. 
 
-**screen_size**   = (X, Y) = (600, 600):
+**screen_size** = (X, Y) = (600, 600):
 > Dimensions of the virtual display where the game will render. Irrelevant if pygame will not be used.
   
-**obs_type**      = 'image' or 'coords' = 'image': 
+**obs_type** = 'image' or 'coords' = 'image': 
 > What type of observation you want. Image gets you a coordinate array with RGB tuples corresponding to pixel color. Coords gets you a coordinate array with boolean tuples of size 4 signifying the presence of entities in that cell (index 0 is agent A, index 1 is agent B, index 2 is stag, index 3 is plant).  
 
 **load_renderer** = bool = False: 
