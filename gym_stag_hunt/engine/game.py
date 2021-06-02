@@ -333,16 +333,19 @@ class Game:
         Moves the stag towards the nearest agent.
         :return:
         """
-        stag_x, stag_y = self.STAG[0], self.STAG[1]
-        a_dist = hypot(stag_x - self.A_AGENT[0], stag_y - self.A_AGENT[1])
-        b_dist = hypot(stag_x - self.B_AGENT[0], stag_y - self.B_AGENT[1])
+        if self._stag_follows:
+            stag_x, stag_y = self.STAG[0], self.STAG[1]
+            a_dist = hypot(stag_x - self.A_AGENT[0], stag_y - self.A_AGENT[1])
+            b_dist = hypot(stag_x - self.B_AGENT[0], stag_y - self.B_AGENT[1])
 
-        if a_dist < b_dist:
-            agent_to_seek = 'a'
+            if a_dist < b_dist:
+                agent_to_seek = 'a'
+            else:
+                agent_to_seek = 'b'
+
+            self.STAG = self._seek_agent(agent_to_seek)
         else:
-            agent_to_seek = 'b'
-
-        self.STAG = self._seek_agent(agent_to_seek)
+            self.STAG = self._random_move(self.STAG)
 
     def _move_entity(self, entity_pos, action):
         """

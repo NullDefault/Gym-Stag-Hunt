@@ -126,7 +126,7 @@ class StagHuntEnv(gym.Env):
 
 
 if __name__ == "__main__":
-    env = StagHuntEnv(obs_type='image')
+    env = StagHuntEnv(obs_type='image', stag_follows=False)
     env.reset()
     for i in range(10000):
         obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
