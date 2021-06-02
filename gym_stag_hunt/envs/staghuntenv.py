@@ -126,10 +126,10 @@ class StagHuntEnv(gym.Env):
 
 
 if __name__ == "__main__":
-    env = StagHuntEnv()
+    env = StagHuntEnv(obs_type='coord')
     env.reset()
-    for i in range(10):
+    for i in range(1000):
         obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
-        env.render(obs=obs)
+        env.render()
     env.close()
     quit()

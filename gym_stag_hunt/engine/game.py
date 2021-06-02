@@ -290,7 +290,7 @@ class Game:
         for plant in plants:
             matrix[plant[0]][plant[1]][PLANT] = True
 
-        return matrix
+        return np.flipud(np.rot90(matrix))
 
     """
     Movement Methods

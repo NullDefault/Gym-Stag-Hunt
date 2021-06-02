@@ -7,6 +7,8 @@ Contains everything pertaining to rendering the game (besides sprite code, which
 import pygame as pg
 import sys
 
+from numpy import rot90, flipud
+
 from gym_stag_hunt.engine.entity import Entity, get_gui_window_icon
 
 
@@ -147,7 +149,7 @@ class Renderer:
         self._screen.blit(self._entity_layer, (0, 0))
 
         if return_observation:
-            return pg.surfarray.array3d(pg.display.get_surface())
+            return flipud(rot90(pg.surfarray.array3d(pg.display.get_surface())))
 
     def render_on_display(self):
         """
