@@ -1,4 +1,4 @@
-# gym-stag-hunt
+# Gym Stag Hunt
 
 The repository contains an implementation of a Markov Stag Hunt - a multi agent grid-based game as described in [this paper](https://arxiv.org/abs/1709.02865). The core goal of the project is to offer a robust, efficient, and customizable environment for exploring prosocial behavior in multi agent reinforcement learning. Feedback and requests for features are welcome.
 
@@ -11,9 +11,24 @@ h reinforcement. If an agent is on top of a stag, and the other agent is not, th
 However, if both agents are on top of the stag, they **catch** it, both earning p reinforcement points. After a specified amount of
 time steps (default is 1000), the game is considered done and the environment will reset the position of its entities.
 
+**Observations**: RGB pixel array or coordinate array with boolean tuples signifying entity presence.  
+**Actions**: Left, down, right or up on the grid. Encoding is ```LEFT=0, DOWN=1, RIGHT=2, UP=3```.
+
+#### PyGame Rendering / Image Observation
 <p align="center">
   <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/screenshot.png?raw=true" />
 </p>
+
+#### Matrix Printout / Coordinate Observation
+```
+╔════════════════════════════╗
+║ ·A   ·   P·    ·    · B  · ║
+║ ·    ·    ·    ·    ·    · ║
+║ ·    ·    ·  S ·    ·    · ║
+║ ·    ·    ·    ·   P·    · ║
+║ ·    ·    ·    ·    ·    · ║
+╚════════════════════════════╝
+```
 
 ### Config Parameters
 **param** = format = default value:
@@ -61,3 +76,19 @@ After cloning the repository:
 cd Gym-Stag-Hunt
 pip install -e .
 ```
+
+# Minimal Example
+```
+import gym
+import gym_stag_hunt
+import time
+
+env = gym.make("StagHunt-v0", obs_type='image', ...) # you can pass config parameters here
+env.reset()
+for iteration in range(1000):
+  time.sleep(.2)
+  obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
+  env.render()
+env.close()
+```
+
