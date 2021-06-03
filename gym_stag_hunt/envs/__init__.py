@@ -1,1 +1,1 @@
-from gym_stag_hunt.envs.staghuntenv import *
+from gym_stag_hunt.envs.staghunt_markov import *
