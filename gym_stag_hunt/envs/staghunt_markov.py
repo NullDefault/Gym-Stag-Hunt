@@ -3,7 +3,7 @@ from gym_stag_hunt.engine.game import Game
 from gym_stag_hunt.engine.renderer import print_matrix
 from numpy import int8, int64
 
-from gym_stag_hunt.envs.abstract_stag_hunt import AbstractStagHunt
+from gym_stag_hunt.envs.abstract_staghunt import AbstractStagHunt
 
 
 class MarkovStagHunt(AbstractStagHunt):

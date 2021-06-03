@@ -4,7 +4,7 @@ from sys import stdout
 
 from gym.spaces import Discrete
 
-from gym_stag_hunt.envs.abstract_stag_hunt import AbstractStagHunt
+from gym_stag_hunt.envs.abstract_staghunt import AbstractStagHunt
 
 COOPERATE = 0
 DEFECT = 1
