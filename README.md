@@ -67,6 +67,40 @@ time steps (default is 1000), the game is considered done and the environment wi
 **mauling_punishment** = int = -5:
 > Reinforcement reward (or, rather, punishment) for getting mauled by a stag. Expected to be negative.
 
+## Classic Stag Hunt
+
+A 2x2 Stag Hunt game as usually described in game theory literature.
+
+**Observations**: No observations, although last taken agent actions are returned in place of the observation.  
+**Actions**: Cooperate or Defect, encoding is ```COOPERATE=0, DEFECT=1```.
+
+### Config Parameters
+**param** = format = default value:
+> Description
+
+**stag_reward** = int = 5:
+> Reinforcement reward for when agents catch the stag by occupying the same cell as it at the same time. Expected to be positive.
+
+**forage_reward** = int = 1:
+> Reinforcement reward for harvesting a plant. Expected to be positive.
+
+**mauling_punishment** = int = -5:
+> Reinforcement reward (or, rather, punishment) for getting mauled by a stag. Expected to be negative.
+
+### Example Render
+
+```
+      B   
+    C   D 
+   ╔══╦══╗
+ C ║AB║  ║
+   ║  ║  ║
+A  ╠══╬══╣
+   ║  ║  ║
+ D ║  ║  ║
+   ╚══╩══╝
+```
+A and B are cooperating here.
 
 # Installation
 
