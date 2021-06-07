@@ -2,17 +2,38 @@ import time
 from random import randint
 from sys import stdout
 
+from gym import Env
 from gym.spaces import Discrete
-
-from gym_stag_hunt.envs.abstract_staghunt import AbstractStagHunt
 
 COOPERATE = 0
 DEFECT = 1
 
 
-class ClassicStagHunt(AbstractStagHunt):
-    def __init__(self):
+class ClassicStagHunt(Env):
+    def __init__(self,
+                 stag_reward=5,
+                 forage_reward=1,
+                 mauling_punishment=-5):
+        """
+        :param stag_reward: How much reinforcement the agents get for catching the stag
+        :param forage_reward: How much reinforcement the agents get for harvesting a plant
+        :param mauling_punishment: How much reinforcement the agents get for trying to catch a stag alone (MUST be neg.)
+        """
+
+        if not (stag_reward > forage_reward >= 0 > mauling_punishment):
+            raise AttributeError('The game does not qualify as a Stag Hunt, please change parameters so that '
+                                 'stag_reward > forage_reward >= 0 > mauling_punishment')
+
         super(ClassicStagHunt, self).__init__()
+
+        self.stag_reward = stag_reward
+        self.forage_reward = forage_reward
+        self.mauling_punishment = mauling_punishment
+        self.reward_range = (mauling_punishment, stag_reward)
+
+        self.done = False
+        self.seed()
+
         self.action_space = Discrete(2)             # cooperate or defect
         self.observation_space = Discrete(2)        # last agent actions
 

@@ -6,18 +6,13 @@ Stores all the state data needed for the game logic.
 
 from itertools import product
 from math import hypot
-from random import randint, choice
+from random import choice
 
 import numpy as np
 
+from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame, overlaps_entity
 
-"""
-Possible Actions
-"""
-LEFT  = 0
-DOWN  = 1
-RIGHT = 2
-UP    = 3
+from gym_stag_hunt.src.games.abstract_grid_game import UP, DOWN, LEFT, RIGHT
 
 """
 Entity Keys
@@ -28,13 +23,8 @@ STAG    = 2
 PLANT   = 3
 
 
-class Game:
+class StagHunt(AbstractGridGame):
     def __init__(self,
-                 window_title,
-                 grid_size,
-                 screen_size,
-                 obs_type,
-                 load_renderer,
                  episodes_per_game,
                  stag_reward,
                  stag_follows,
@@ -42,12 +32,9 @@ class Game:
                  forage_quantity,
                  forage_reward,
                  mauling_punishment,
-                 ):
+                 # Super Class Params
+                 window_title, grid_size, screen_size, obs_type, load_renderer, which_game):
         """
-        :param window_title: What we set as the window caption
-        :param grid_size: A (W, H) tuple corresponding to the grid dimensions. Although W=H is expected, W!=H works also
-        :param screen_size: A (W, H) tuple corresponding to the pixel dimensions of the game window
-        :param obs_type: Can be 'image' for pixel-array based observations, or 'coords' for just the entity coordinates
         :param episodes_per_game: How many timesteps take place before we reset the entity positions.
         :param stag_reward: How much reinforcement the agents get for catching the stag
         :param stag_follows: Should the stag seek out the nearest agent (true) or take a random move (false)
@@ -57,9 +44,9 @@ class Game:
         :param mauling_punishment: How much reinforcement the agents get for trying to catch a stag alone (MUST be neg.)
         """
 
+        super(StagHunt, self).__init__(grid_size=grid_size, screen_size=screen_size, obs_type=obs_type)
+
         # Config
-        self._renderer            = None                    # placeholder renderer
-        self._obs_type            = obs_type                # record type of observation as attribute
         self._stag_follows        = stag_follows
         self._run_away_after_maul = run_away_after_maul
 
@@ -71,13 +58,10 @@ class Game:
 
         # State Variables
         self._tagged_plants = []                            # harvested plants that need to be re-spawned
-        self._grid_size     = grid_size                     # record grid dimensions as attribute
         self._eps_to_go     = episodes_per_game             # state variable to keep track of how many eps till reset
         self._eps_per_game  = episodes_per_game             # record episodes per game as attribute
 
         # Entity Positions
-        self._a_pos      = np.zeros(2, dtype=int)           # create empty tuples for all the entity positions
-        self._b_pos      = np.zeros(2, dtype=int)
         self._stag_pos   = np.zeros(2, dtype=int)
         self._plants_pos = []
         self.reset_entities()                               # place the entities on the grid
@@ -85,8 +69,9 @@ class Game:
         # If rendering is enabled, we will instantiate the rendering pipeline
         if obs_type == 'image' or load_renderer:
             # we don't want to import pygame if we aren't going to use it, so that's why this import is here
-            from gym_stag_hunt.engine.renderer import Renderer
-            self._renderer = Renderer(game=self, window_title=window_title, screen_size=screen_size)
+            from gym_stag_hunt.src.rendering import Renderer
+            self._renderer = Renderer(game=self, window_title=window_title,
+                                      screen_size=screen_size, which_game='staghunt')
 
     """
     Plant Spawning Methods
@@ -151,17 +136,6 @@ class Game:
     Collision Logic
     """
 
-    def _overlaps_entity(self, a, b):
-        """
-        :param a: (X, Y) tuple for entity 1
-        :param b: (X, Y) tuple for entity 2
-        :return: True if they are on the same cell, False otherwise
-        """
-        if a[0] == b[0] and a[1] == b[1]:
-            return True
-        else:
-            return False
-
     def _overlaps_plants(self, a, plants):
         """
         :param a: (X, Y) tuple for entity 1
@@ -185,8 +159,8 @@ class Game:
         :return: A tuple R where R[0] is the reinforcement for A_Agent, and R[1] is the reinforcement for B_Agent
         """
 
-        if self._overlaps_entity(self.A_AGENT, self.STAG):
-            if self._overlaps_entity(self.B_AGENT, self.STAG):
+        if overlaps_entity(self.A_AGENT, self.STAG):
+            if overlaps_entity(self.B_AGENT, self.STAG):
                 return self._stag_reward, self._stag_reward                 # Successful stag hunt
             else:
                 if self._overlaps_plants(self.B_AGENT, self.PLANTS):
@@ -194,7 +168,7 @@ class Game:
                 else:
                     return self._mauling_punishment, 0                      # A is mauled, B did not forage
 
-        elif self._overlaps_entity(self.B_AGENT, self.STAG):
+        elif overlaps_entity(self.B_AGENT, self.STAG):
             """
             we already covered the case where a and b are both on the stag,
             so we can skip that check here
@@ -258,16 +232,6 @@ class Game:
         obs = self.get_observation()
 
         return obs, iteration_rewards, game_done
-
-    def get_observation(self):
-        """
-        :return: observation of the current game state
-        """
-        if self._obs_type == 'image':
-            obs = self.RENDERER.update()        # this will return a numpy pixel array
-        else:
-            obs = self._coord_observation()     # this will return a 3d array
-        return obs
 
     def _coord_observation(self):
         """
@@ -347,30 +311,6 @@ class Game:
         else:
             self.STAG = self._random_move(self.STAG)
 
-    def _move_entity(self, entity_pos, action):
-        """
-        Move the specified entity
-        :param entity_pos: starting position
-        :param action: which direction to move
-        :return: new position tuple
-        """
-        if action == LEFT:
-            return self._move_left(entity_pos)
-        elif action == DOWN:
-            return self._move_down(entity_pos)
-        elif action == RIGHT:
-            return self._move_right(entity_pos)
-        elif action == UP:
-            return self._move_up(entity_pos)
-
-    def _reset_agents(self):
-        """
-        Place agents in the top left and top right corners.
-        :return:
-        """
-        self.A_AGENT = [0, 0]
-        self.B_AGENT = [self.GRID_W - 1, 0]
-
     def reset_entities(self):
         """
         Reset all entity positions.
@@ -379,63 +319,6 @@ class Game:
         self._reset_agents()
         self.STAG = [self.GRID_W // 2, self.GRID_H // 2]
         self.PLANTS = self._spawn_plants()
-
-    def _random_move(self, pos):
-        """
-        Move in a random direction
-        :param pos: starting position
-        :return: new position
-        """
-        if randint(0, 1) == 0:
-            if randint(0, 1) == 0:
-                return self._move_left(pos)
-            else:
-                return self._move_right(pos)
-        else:
-            if randint(0, 1) == 0:
-                return self._move_up(pos)
-            else:
-                return self._move_down(pos)
-
-    def _move_left(self, pos):
-        """
-        :param pos: starting position
-        :return: new position
-        """
-        new_x = pos[0] - 1
-        if new_x == -1:
-            new_x = 0
-        return new_x, pos[1]
-
-    def _move_right(self, pos):
-        """
-        :param pos: starting position
-        :return: new position
-        """
-        new_x = pos[0] + 1
-        if new_x == self.GRID_W:
-            new_x = self.GRID_W - 1
-        return new_x, pos[1]
-
-    def _move_up(self, pos):
-        """
-        :param pos: starting position
-        :return: new position
-        """
-        new_y = pos[1] - 1
-        if new_y == -1:
-            new_y = 0
-        return pos[0], new_y
-
-    def _move_down(self, pos):
-        """
-        :param pos: starting position
-        :return: new position
-        """
-        new_y = pos[1] + 1
-        if new_y == self.GRID_H:
-            new_y = self.GRID_H - 1
-        return pos[0], new_y
 
     def make_random_moves(self):
         """
@@ -449,38 +332,6 @@ class Game:
     """
     Properties
     """
-
-    @property
-    def GRID_DIMENSIONS(self):
-        return self.GRID_W, self.GRID_H
-
-    @property
-    def GRID_W(self):
-        return int(self._grid_size[0])
-
-    @property
-    def GRID_H(self):
-        return int(self._grid_size[1])
-
-    @property
-    def AGENTS(self):
-        return self._a_pos, self._b_pos
-
-    @property
-    def A_AGENT(self):
-        return self._a_pos
-
-    @A_AGENT.setter
-    def A_AGENT(self, new_pos):
-        self._a_pos[0], self._a_pos[1] = new_pos[0], new_pos[1]
-
-    @property
-    def B_AGENT(self):
-        return self._b_pos
-
-    @B_AGENT.setter
-    def B_AGENT(self, new_pos):
-        self._b_pos[0], self._b_pos[1] = new_pos[0], new_pos[1]
 
     @property
     def STAG(self):
@@ -510,10 +361,3 @@ class Game:
             'plants': self.PLANTS
         }
 
-    @property
-    def RENDERER(self):
-        return self._renderer
-
-    @property
-    def COORD_OBS(self):
-        return self._coord_observation()

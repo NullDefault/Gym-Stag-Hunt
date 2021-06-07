@@ -1,12 +1,12 @@
+from gym import Env
 from gym.spaces import Discrete, Box
-from gym_stag_hunt.engine.game import Game
-from gym_stag_hunt.engine.renderer import print_matrix
 from numpy import int8, int64
 
-from gym_stag_hunt.envs.abstract_staghunt import AbstractStagHunt
+from gym_stag_hunt.src.games.staghunt_game import StagHunt
+from gym_stag_hunt.src.rendering import print_matrix
 
 
-class MarkovStagHunt(AbstractStagHunt):
+class MarkovStagHunt(Env):
     def __init__(self,
                  grid_size=(5, 5),
                  screen_size=(600, 600),
@@ -16,6 +16,9 @@ class MarkovStagHunt(AbstractStagHunt):
                  stag_follows=True,
                  run_away_after_maul=False,
                  forage_quantity=2,
+                 stag_reward=5,
+                 forage_reward=1,
+                 mauling_punishment=-5
                  ):
         """
         :param grid_size: A (W, H) tuple corresponding to the grid dimensions. Although W=H is expected, W!=H works also
@@ -25,10 +28,14 @@ class MarkovStagHunt(AbstractStagHunt):
         :param stag_follows: Should the stag seek out the nearest agent (true) or take a random move (false)
         :param run_away_after_maul: Does the stag stay on the same cell after mauling an agent (true) or respawn (false)
         :param forage_quantity: How many plants will be placed on the board.
+        :param stag_reward: How much reinforcement the agents get for catching the stag
+        :param forage_reward: How much reinforcement the agents get for harvesting a plant
+        :param mauling_punishment: How much reinforcement the agents get for trying to catch a stag alone (MUST be neg.)
         """
-        super(MarkovStagHunt, self).__init__()
-
-        if self.mauling_punishment == self.forage_reward:
+        if not (stag_reward > forage_reward >= 0 > mauling_punishment):
+            raise AttributeError('The game does not qualify as a Stag Hunt, please change parameters so that '
+                                 'stag_reward > forage_reward >= 0 > mauling_punishment')
+        if mauling_punishment == forage_reward:
             raise AttributeError('Mauling punishment and forage reward are equal.'
                                  ' Game logic will not function properly.')
         if episodes_per_game <= 0:
@@ -39,27 +46,38 @@ class MarkovStagHunt(AbstractStagHunt):
         if total_cells < 3:
             raise AttributeError('Grid is too small. Please specify a larger grid size.')
 
-        self.obs_type           = obs_type
+        super(MarkovStagHunt, self).__init__()
 
-        window_title = "OpenAI Gym - Markov Stag Hunt (%d x %d)" % grid_size   # create game representation
-        self.game = Game(window_title=window_title,
-                         grid_size=grid_size,
-                         screen_size=screen_size,
-                         obs_type=obs_type,
-                         load_renderer=load_renderer,
-                         episodes_per_game=episodes_per_game,
-                         stag_reward=self.stag_reward,
-                         stag_follows=stag_follows,
-                         run_away_after_maul=run_away_after_maul,
-                         forage_quantity=forage_quantity,
-                         forage_reward=self.forage_reward,
-                         mauling_punishment=self.mauling_punishment)
+        self.obs_type = obs_type
 
-        self.action_space = Discrete(4)                                  # up, down, left, right on the grid
+        self.stag_reward = stag_reward
+        self.forage_reward = forage_reward
+        self.mauling_punishment = mauling_punishment
+        self.reward_range = (mauling_punishment, stag_reward)
 
-        if obs_type == 'image':                                          # Observation is the rgb pixel array
+        self.done = False
+        self.seed()
+
+        window_title = "OpenAI Gym - Markov Stag Hunt (%d x %d)" % grid_size  # create game representation
+        self.game = StagHunt(window_title=window_title,
+                             grid_size=grid_size,
+                             screen_size=screen_size,
+                             obs_type=obs_type,
+                             load_renderer=load_renderer,
+                             episodes_per_game=episodes_per_game,
+                             stag_reward=self.stag_reward,
+                             stag_follows=stag_follows,
+                             run_away_after_maul=run_away_after_maul,
+                             forage_quantity=forage_quantity,
+                             forage_reward=self.forage_reward,
+                             mauling_punishment=self.mauling_punishment,
+                             which_game='staghunt')
+
+        self.action_space = Discrete(4)  # up, down, left, right on the grid
+
+        if obs_type == 'image':  # Observation is the rgb pixel array
             self.observation_space = Box(0, 255, shape=(screen_size[0], screen_size[1], 3), dtype=int64)
-        elif obs_type == 'coords':          # Observation is an xy matrix with booleans signifying entities in the cell
+        elif obs_type == 'coords':  # Observation is an xy matrix with booleans signifying entities in the cell
             self.observation_space = Box(0, 1, shape=(grid_size[0], grid_size[1], 4), dtype=int8)
 
     def step(self, actions):
