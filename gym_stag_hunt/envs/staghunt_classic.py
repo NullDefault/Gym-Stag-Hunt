@@ -1,4 +1,3 @@
-import time
 from random import randint
 from sys import stdout
 
@@ -119,14 +118,3 @@ class ClassicStagHunt(Env):
         :return:
         """
         quit()
-
-
-if __name__ == "__main__":
-    env = ClassicStagHunt()
-    env.reset()
-    for i in range(1000):
-        obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
-        time.sleep(.4)
-        env.render(rewards=rewards)
-    env.close()
-    quit()

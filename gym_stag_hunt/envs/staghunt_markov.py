@@ -129,13 +129,3 @@ class MarkovStagHunt(Env):
         """
         if self.game.RENDERER:
             self.game.RENDERER.quit()
-
-
-if __name__ == "__main__":
-    env = MarkovStagHunt(obs_type='image')
-    env.reset()
-    for i in range(1000):
-        obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
-        env.render()
-    env.close()
-    quit()
