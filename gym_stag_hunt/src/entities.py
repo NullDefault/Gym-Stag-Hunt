@@ -16,6 +16,7 @@ sprite_dict = {
     'b_agent': os.path.join(base_path, 'assets/red_agent.png'),
     'stag': os.path.join(base_path, 'assets/stag.png'),
     'plant': os.path.join(base_path, 'assets/plant_fruit.png'),
+    'plant_young': os.path.join(base_path, 'assets/plant_no_fruit.png')
 }
 
 

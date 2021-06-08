@@ -83,7 +83,8 @@ class Renderer:
             self._stag_sprite = Entity(entity_type='stag', cell_sizes=cell_sizes, location=entity_positions['stag'])
             self._plant_sprites = self._make_plant_entities(entity_positions['plants'])
         elif which_game == 'harvest':
-            self._plant_sprites = self._make_plant_entities(entity_positions['plants'])
+            self._young_plant_sprites = self._make_plant_entities(entity_positions['young_plants'])
+            self._mature_plant_sprites = self._make_plant_entities(entity_positions['mature_plants'])
         elif which_game == 'escalation':
             self._mark_sprite = Entity(entity_type='mark', cell_sizes=cell_sizes, location=entity_positions['mark'])
 
@@ -155,7 +156,6 @@ class Renderer:
         self._update_rects(self._game.ENTITY_POSITIONS)
         self._entity_layer.fill(CLEAR)
         self._draw_entities()
-
         # blit the surfaces to the screen surface
         self._screen.blit(self._background, (0, 0))
         self._screen.blit(self._grid_layer, (0, 0))
@@ -197,8 +197,8 @@ class Renderer:
                 self._entity_layer.blit(plant.IMAGE, (plant.rect.left, plant.rect.top))
 
         if self._which_game == 'harvest':
-            for plant in self._plant_sprites:
-                self._entity_layer.blit(plant.IMAGE, (plant.rect.left, plant.rect.top))
+            pass
+            # fix rendering
 
         if self._which_game == 'escalation':
             self._entity_layer.blit(self._mark_sprite.IMAGE, (self._mark_sprite.rect.left, self._mark_sprite.rect.top))
@@ -225,11 +225,8 @@ class Renderer:
                 idx = idx + 1
 
         if self._which_game == 'harvest':
-            plants_pos = entity_positions['plants']
-            idx = 0
-            for plant in self._plant_sprites:
-                plant.update_rect(plants_pos[idx])
-                idx = idx + 1
+            pass
+            # fix rect updates
 
         if self._which_game == 'escalation':
             self._mark_sprite.update_rect(entity_positions['mark'])

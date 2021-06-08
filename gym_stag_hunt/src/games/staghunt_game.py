@@ -33,7 +33,7 @@ class StagHunt(AbstractGridGame):
                  forage_reward,
                  mauling_punishment,
                  # Super Class Params
-                 window_title, grid_size, screen_size, obs_type, load_renderer, which_game):
+                 window_title, grid_size, screen_size, obs_type, load_renderer):
         """
         :param episodes_per_game: How many timesteps take place before we reset the entity positions.
         :param stag_reward: How much reinforcement the agents get for catching the stag
@@ -319,15 +319,6 @@ class StagHunt(AbstractGridGame):
         self._reset_agents()
         self.STAG = [self.GRID_W // 2, self.GRID_H // 2]
         self.PLANTS = self._spawn_plants()
-
-    def make_random_moves(self):
-        """
-        Make the agents and stag take random moves (used for testing and demos)
-        :return:
-        """
-        self.A_AGENT = self._random_move(self.A_AGENT)
-        self.B_AGENT = self._random_move(self.B_AGENT)
-        self.STAG = self._random_move(self.STAG)
 
     """
     Properties
