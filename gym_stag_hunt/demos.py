@@ -3,16 +3,15 @@ import time
 from gym_stag_hunt.envs import ClassicStagHunt, MarkovStagHunt
 from gym_stag_hunt.envs.staghunt_harvest import HarvestStagHunt
 
-ENVS = 'CLASSIC', 'MARKOV', 'HARVEST'
-ENV = 'HARVEST'
+ENVS = {
+    'CLASSIC': ClassicStagHunt,
+    'MARKOV': MarkovStagHunt,
+    'HARVEST': HarvestStagHunt
+}
+ENV = 'MARKOV'
 
 if __name__ == "__main__":
-    if ENV == 'CLASSIC':
-        env = ClassicStagHunt()
-    elif ENV == 'MARKOV':
-        env = MarkovStagHunt()
-    elif ENV == 'HARVEST':
-        env = HarvestStagHunt()
+    env = ENVS[ENV]()
 
     env.reset()
     for i in range(1000):

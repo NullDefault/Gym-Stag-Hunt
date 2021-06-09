@@ -4,30 +4,9 @@ Renderer
 Contains everything pertaining to rendering the game (besides sprite code, which is in entity.py).
 """
 
-import sys
-
 import pygame as pg
-from numpy import rot90, flipud
-
 from gym_stag_hunt.src.entities import Entity, get_gui_window_icon
-
-
-def print_matrix(matrix):
-    sys.stdout.write('╔════════════════════════════╗\n')
-    for row in matrix:
-        sys.stdout.write('║ ·')
-        for col in row:
-            cell = []
-            cell.append('A') if col[0] == 1 else cell.append(' ')
-            cell.append('B') if col[1] == 1 else cell.append(' ')
-            cell.append('S') if col[2] == 1 else cell.append(' ')
-            cell.append('P') if col[3] == 1 else cell.append(' ')
-            sys.stdout.write(''.join(cell) + '·')
-        sys.stdout.write(' ║')
-        sys.stdout.write('\n')
-    sys.stdout.write('╚════════════════════════════╝\n\r')
-    sys.stdout.flush()
-
+from numpy import rot90, flipud
 
 """
 Drawing Colors
@@ -36,23 +15,14 @@ BACKGROUND_COLOR = (255, 185, 137)
 GRID_LINE_COLOR = (200, 150, 100, 200)
 CLEAR = (0, 0, 0, 0)
 
-"""
-Game Dictionary
-"""
 
-
-class Renderer:
-    def __init__(self,
-                 game,
-                 window_title,
-                 screen_size,
-                 which_game):
+class AbstractRenderer:
+    def __init__(self, game, window_title, screen_size):
         """
         :param game: Class-based representation of the game state. Feeds all the information necessary to the renderer
         :param window_title: What we set as the window caption
         :param screen_size: The size of the virtual display on which we will be rendering stuff on
         """
-        # PyGame config
         pg.init()  # initialize pygame
         pg.display.set_caption(window_title)  # set the window caption
         pg.display.set_icon(get_gui_window_icon())  # set the window icon
@@ -60,7 +30,6 @@ class Renderer:
         self._screen = pg.display.set_mode(screen_size)  # instantiate virtual display
         self._screen_size = tuple(map(sum, zip(screen_size, (-1, -1))))  # record screen size as an attribute
         self._game = game  # record game as an attribute
-        self._which_game = which_game
 
         # Create a background
         self._background = pg.Surface(self._screen.get_size()).convert()  # here we create and fill all the
@@ -73,41 +42,25 @@ class Renderer:
         self._entity_layer.fill(CLEAR)
 
         # Load sprites for the game objects
-        cell_sizes = self.CELL_SIZE  # the entities are instantiated here
+        cell_sizes = self.CELL_SIZE
         entity_positions = self._game.ENTITY_POSITIONS
 
         self._a_sprite = Entity(entity_type='a_agent', cell_sizes=cell_sizes, location=entity_positions['a_agent'])
         self._b_sprite = Entity(entity_type='b_agent', cell_sizes=cell_sizes, location=entity_positions['b_agent'])
 
-        if which_game == 'staghunt':
-            self._stag_sprite = Entity(entity_type='stag', cell_sizes=cell_sizes, location=entity_positions['stag'])
-            self._plant_sprites = self._make_plant_entities(entity_positions['plants'])
-        elif which_game == 'harvest':
-            self._young_plant_sprites = self._make_plant_entities(entity_positions['young_plants'])
-            self._mature_plant_sprites = self._make_plant_entities(entity_positions['mature_plants'])
-        elif which_game == 'escalation':
-            self._mark_sprite = Entity(entity_type='mark', cell_sizes=cell_sizes, location=entity_positions['mark'])
-
-        # pre-draw the grid
-        self._draw_grid()
-
-        # pre-draw all the entities
-        self._draw_entities()
-
     """
     Controller Methods
     """
 
-    def update(self, return_observation=True):
+    def update(self):
         """
         :return: A pixel array corresponding to the new game state.
         """
         try:
-            img_output = self._update_render(return_observation=return_observation)
+            img_output = self._update_render()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.quit()
-
         except Exception as e:
             self.quit()
             raise e
@@ -125,21 +78,6 @@ class Renderer:
             quit()
         except Exception as e:
             raise e
-
-    """
-    Misc
-    """
-
-    def _make_plant_entities(self, locations):
-        """
-        :param locations: locations for the new plants
-        :return: an array of plant entities ready to be rendered.
-        """
-        plants = []
-        cell_sizes = self.CELL_SIZE
-        for loc in locations:
-            plants.append(Entity(entity_type='plant', cell_sizes=cell_sizes, location=loc))
-        return plants
 
     """
     Drawing Methods
@@ -186,23 +124,6 @@ class Renderer:
             pg.draw.line(self._grid_layer, GRID_LINE_COLOR, (x * self.CELL_W, 0), (x * self.CELL_W, self.SCREEN_H))
 
     def _draw_entities(self):
-        """
-        Draws the entity sprites to the entity layer surface.
-        :return:
-        """
-
-        if self._which_game == 'staghunt':
-            self._entity_layer.blit(self._stag_sprite.IMAGE, (self._stag_sprite.rect.left, self._stag_sprite.rect.top))
-            for plant in self._plant_sprites:
-                self._entity_layer.blit(plant.IMAGE, (plant.rect.left, plant.rect.top))
-
-        if self._which_game == 'harvest':
-            pass
-            # fix rendering
-
-        if self._which_game == 'escalation':
-            self._entity_layer.blit(self._mark_sprite.IMAGE, (self._mark_sprite.rect.left, self._mark_sprite.rect.top))
-
         # Agents
         self._entity_layer.blit(self._a_sprite.IMAGE, (self._a_sprite.rect.left, self._a_sprite.rect.top))
         self._entity_layer.blit(self._b_sprite.IMAGE, (self._b_sprite.rect.left, self._b_sprite.rect.top))
@@ -215,21 +136,6 @@ class Renderer:
         """
         self._a_sprite.update_rect(entity_positions['a_agent'])
         self._b_sprite.update_rect(entity_positions['b_agent'])
-
-        if self._which_game == 'staghunt':
-            self._stag_sprite.update_rect(entity_positions['stag'])
-            plants_pos = entity_positions['plants']
-            idx = 0
-            for plant in self._plant_sprites:
-                plant.update_rect(plants_pos[idx])
-                idx = idx + 1
-
-        if self._which_game == 'harvest':
-            pass
-            # fix rect updates
-
-        if self._which_game == 'escalation':
-            self._mark_sprite.update_rect(entity_positions['mark'])
 
     """
     Properties
@@ -266,3 +172,5 @@ class Renderer:
     @property
     def CELL_SIZE(self):
         return self.CELL_W, self.CELL_H
+
+

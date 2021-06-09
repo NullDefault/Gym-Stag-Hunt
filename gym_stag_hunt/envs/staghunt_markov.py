@@ -3,7 +3,7 @@ from gym.spaces import Discrete, Box
 from numpy import int8, int64
 
 from gym_stag_hunt.src.games.staghunt_game import StagHunt
-from gym_stag_hunt.src.rendering import print_matrix
+from gym_stag_hunt.src.rendering.utils import print_matrix
 
 
 class MarkovStagHunt(Env):
@@ -112,7 +112,7 @@ class MarkovStagHunt(Env):
                 self.game.RENDERER.render_on_display()
         if mode == "human":
             if self.game.RENDERER:
-                self.game.RENDERER.update(return_observation=False)
+                self.game.RENDERER.update()
                 self.game.RENDERER.render_on_display()
             else:
                 if obs is None:

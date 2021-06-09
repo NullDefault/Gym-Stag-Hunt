@@ -44,30 +44,18 @@ class Harvest(AbstractGridGame):
         self._mature_reward = mature_reward
 
         # Entity Positions
-        self._young_plants_pos = []
-        self._mature_plants_pos = []
+        # plants = ???
         self.reset_entities()                               # place the entities on the grid
 
         # If rendering is enabled, we will instantiate the rendering pipeline
         if obs_type == 'image' or load_renderer:
             # we don't want to import pygame if we aren't going to use it, so that's why this import is here
-            from gym_stag_hunt.src.rendering import Renderer
-            self._renderer = Renderer(game=self, window_title=window_title,
-                                      screen_size=screen_size, which_game='harvest')
+            from gym_stag_hunt.src.rendering.harvest_renderer import HarvestRenderer
+            self._renderer = HarvestRenderer(game=self, window_title=window_title, screen_size=screen_size)
 
     """
     Plant Spawning Methods
     """
-
-    def _spawn_plants(self):
-        """
-        Generate new coordinates for all the plants.
-        :return: list of location tuples
-        """
-        new_plants = []
-        for x in range(self._max_plants):
-            new_plants.append(self._place_entity_in_unoccupied_cell())
-        return new_plants
 
     def _place_entity_in_unoccupied_cell(self, existing_plants=None):
         """
@@ -157,27 +145,6 @@ class Harvest(AbstractGridGame):
             self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves)
             self.B_AGENT = self._random_move(self.B_AGENT)
 
-        new_mature = []
-        for plant in list(self._mature_plants_pos):
-            if uniform(0, 1) >= self._chance_to_die:
-                new_mature.append(plant)
-
-        new_young = []
-
-        for plant in list(self._young_plants_pos):
-            if uniform(0, 1) <= self._chance_to_mature:
-                new_mature.append(plant)
-            else:
-                new_young.append(plant)
-
-        plants_to_respawn = self._max_plants - len(new_young) - len(new_mature)
-
-        for i in range(plants_to_respawn):
-            new_young.append(self._place_entity_in_unoccupied_cell(existing_plants=
-                                                                   new_young+new_mature))
-        self._young_plants_pos = new_young
-        self._mature_plants_pos = new_mature
-
         # Get Rewards
         iteration_rewards = self._calc_reward()
 
@@ -215,26 +182,16 @@ class Harvest(AbstractGridGame):
         :return:
         """
         self._reset_agents()
-        self._mature_plants_pos = self._spawn_plants()
+        self._plants = self._spawn_plants()
 
     """
     Properties
     """
 
     @property
-    def YOUNG_PLANTS(self):
-        return self._young_plants_pos
-
-    @property
-    def MATURE_PLANTS(self):
-        return self._mature_plants_pos
-
-    @property
     def ENTITY_POSITIONS(self):
         return {
             'a_agent': self.A_AGENT,
             'b_agent': self.B_AGENT,
-            'young_plants': self.YOUNG_PLANTS,
-            'mature_plants': self.MATURE_PLANTS
         }
 

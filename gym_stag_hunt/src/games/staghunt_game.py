@@ -69,9 +69,8 @@ class StagHunt(AbstractGridGame):
         # If rendering is enabled, we will instantiate the rendering pipeline
         if obs_type == 'image' or load_renderer:
             # we don't want to import pygame if we aren't going to use it, so that's why this import is here
-            from gym_stag_hunt.src.rendering import Renderer
-            self._renderer = Renderer(game=self, window_title=window_title,
-                                      screen_size=screen_size, which_game='staghunt')
+            from gym_stag_hunt.src.rendering.markov_renderer import MarkovRenderer
+            self._renderer = MarkovRenderer(game=self, window_title=window_title, screen_size=screen_size)
 
     """
     Plant Spawning Methods

@@ -3,7 +3,7 @@ from gym.spaces import Discrete, Box
 from numpy import int8, int64
 
 from gym_stag_hunt.src.games.harvest_game import Harvest
-from gym_stag_hunt.src.rendering import print_matrix
+from gym_stag_hunt.src.rendering.utils import print_matrix
 
 
 class HarvestStagHunt(Env):
@@ -95,16 +95,17 @@ class HarvestStagHunt(Env):
         if self.obs_type == 'image':
             if mode == "human":
                 self.game.RENDERER.render_on_display()
-        if mode == "human":
-            if self.game.RENDERER:
-                self.game.RENDERER.update(return_observation=False)
-                self.game.RENDERER.render_on_display()
-            else:
-                if obs is None:
-                    obs = self.game.get_observation().astype(int)
+        else:
+            if mode == "human":
+                if self.game.RENDERER:
+                    self.game.RENDERER.update(return_observation=False)
+                    self.game.RENDERER.render_on_display()
                 else:
-                    obs = obs.astype(int)
-                print_matrix(obs)
+                    if obs is None:
+                        obs = self.game.get_observation().astype(int)
+                    else:
+                        obs = obs.astype(int)
+                    print_matrix(obs)
 
     def close(self):
         """
