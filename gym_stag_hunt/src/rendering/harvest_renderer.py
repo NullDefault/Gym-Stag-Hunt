@@ -1,4 +1,4 @@
-from gym_stag_hunt.src.entities import Entity
+from gym_stag_hunt.src.entities import HarvestPlant
 from gym_stag_hunt.src.rendering.abstract_renderer import AbstractRenderer
 
 
@@ -6,8 +6,10 @@ class HarvestRenderer(AbstractRenderer):
     def __init__(self, game, window_title, screen_size):
         super(HarvestRenderer, self).__init__(game=game, window_title=window_title, screen_size=screen_size)
 
-        cell_sizes = self.CELL_SIZE
+        self.cell_sizes = self.CELL_SIZE
         entity_positions = self._game.ENTITY_POSITIONS
+
+        self.plant_sprites = self._make_plant_entities(entity_positions['plant_coords'])
 
         self._draw_grid()
 
@@ -15,13 +17,30 @@ class HarvestRenderer(AbstractRenderer):
     Misc
     """
 
+    def _make_plant_entities(self, locations):
+        """
+        :param locations: locations for the new plants
+        :return: an array of plant entities ready to be rendered.
+        """
+        plants = []
+        cell_sizes = self.CELL_SIZE
+        for loc in locations:
+            plants.append(HarvestPlant(cell_sizes=cell_sizes, location=loc))
+        return plants
+
     def _draw_entities(self):
         """
         Draws the entity sprites to the entity layer surface.
         :return:
         """
 
-        # ~~~~~~~~~~~~
+        maturity_flags = self._game.ENTITY_POSITIONS['maturity_flags']
+
+        for idx, plant in enumerate(self.plant_sprites):
+            if maturity_flags[idx]:
+                self._entity_layer.blit(plant.IMAGE, (plant.rect.left, plant.rect.top))
+            else:
+                self._entity_layer.blit(plant.IMAGE_YOUNG, (plant.rect.left, plant.rect.top))
 
         # Agents
         self._entity_layer.blit(self._a_sprite.IMAGE, (self._a_sprite.rect.left, self._a_sprite.rect.top))
@@ -36,4 +55,5 @@ class HarvestRenderer(AbstractRenderer):
         self._a_sprite.update_rect(entity_positions['a_agent'])
         self._b_sprite.update_rect(entity_positions['b_agent'])
 
-        # ~~~~~~~~~~~~~~~~~~~
+        for idx, plant in enumerate(self.plant_sprites):
+            plant.update_rect(entity_positions['plant_coords'][idx])

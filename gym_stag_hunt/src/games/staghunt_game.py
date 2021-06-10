@@ -1,9 +1,3 @@
-"""
-Game
-----------
-Stores all the state data needed for the game logic.
-"""
-
 from itertools import product
 from math import hypot
 from random import choice
@@ -110,9 +104,8 @@ class StagHunt(AbstractGridGame):
         if stag in coords:
             coords.remove(stag)
         for plant in existing_plants:
-            plant = (plant[0], plant[1])
-            if plant in coords:
-                coords.remove(plant)
+            plant = plant[0], plant[1]
+            coords.remove(plant)
 
         chosen_coords = choice(coords)
         new_pos = np.zeros(2, dtype=int)

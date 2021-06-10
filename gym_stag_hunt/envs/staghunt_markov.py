@@ -119,7 +119,7 @@ class MarkovStagHunt(Env):
                     obs = self.game.get_observation().astype(int)
                 else:
                     obs = obs.astype(int)
-                print_matrix(obs)
+                print_matrix(obs, 'markov')
 
     def close(self):
         """

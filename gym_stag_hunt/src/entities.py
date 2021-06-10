@@ -1,9 +1,3 @@
-"""
-Entity
-----------
-Contains code used to load and render various sprites.
-"""
-
 import os
 
 from pygame import image, Rect, transform
@@ -62,3 +56,16 @@ class Entity(DirtySprite):
     @property
     def IMAGE(self):
         return self._image
+
+
+class HarvestPlant(Entity):
+    def __init__(self, cell_sizes, location):
+        Entity.__init__(self, cell_sizes=cell_sizes, location=location, entity_type='plant')
+        self._image_young = transform.scale(
+            load_img(sprite_dict['plant_young']),
+            (int(cell_sizes[0]), int(cell_sizes[1]))
+        )
+
+    @property
+    def IMAGE_YOUNG(self):
+        return self._image_young

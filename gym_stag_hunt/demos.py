@@ -8,15 +8,15 @@ ENVS = {
     'MARKOV': MarkovStagHunt,
     'HARVEST': HarvestStagHunt
 }
-ENV = 'MARKOV'
+ENV = 'HARVEST'
 
 if __name__ == "__main__":
-    env = ENVS[ENV]()
+    env = ENVS[ENV](obs_type='image')
 
     env.reset()
-    for i in range(1000):
+    for i in range(10000):
         obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
-        time.sleep(.4)
+        time.sleep(.6)
         if ENV == 'CLASSIC':
             env.render(rewards=rewards)
         else:

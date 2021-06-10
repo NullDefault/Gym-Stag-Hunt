@@ -98,14 +98,14 @@ class HarvestStagHunt(Env):
         else:
             if mode == "human":
                 if self.game.RENDERER:
-                    self.game.RENDERER.update(return_observation=False)
+                    self.game.RENDERER.update()
                     self.game.RENDERER.render_on_display()
                 else:
                     if obs is None:
                         obs = self.game.get_observation().astype(int)
                     else:
                         obs = obs.astype(int)
-                    print_matrix(obs)
+                    print_matrix(obs, 'harvest')
 
     def close(self):
         """

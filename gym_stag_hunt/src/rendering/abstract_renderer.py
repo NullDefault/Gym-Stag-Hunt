@@ -1,9 +1,3 @@
-"""
-Renderer
-----------
-Contains everything pertaining to rendering the game (besides sprite code, which is in entity.py).
-"""
-
 import pygame as pg
 from gym_stag_hunt.src.entities import Entity, get_gui_window_icon
 from numpy import rot90, flipud
