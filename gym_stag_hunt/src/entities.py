@@ -10,7 +10,9 @@ sprite_dict = {
     'b_agent': os.path.join(base_path, 'assets/red_agent.png'),
     'stag': os.path.join(base_path, 'assets/stag.png'),
     'plant': os.path.join(base_path, 'assets/plant_fruit.png'),
-    'plant_young': os.path.join(base_path, 'assets/plant_no_fruit.png')
+    'plant_young': os.path.join(base_path, 'assets/plant_no_fruit.png'),
+    'mark': os.path.join(base_path, 'assets/mark.png'),
+    'mark_active': os.path.join(base_path, 'assets/mark_active.png')
 }
 
 
@@ -69,3 +71,16 @@ class HarvestPlant(Entity):
     @property
     def IMAGE_YOUNG(self):
         return self._image_young
+
+
+class Mark(Entity):
+    def __init__(self, cell_sizes, location):
+        Entity.__init__(self, cell_sizes=cell_sizes, location=location, entity_type='mark')
+        self._image_active = transform.scale(
+            load_img(sprite_dict['mark_active']),
+            (int(cell_sizes[0]), int(cell_sizes[1]))
+        )
+
+    @property
+    def IMAGE_ACTIVE(self):
+        return self._image_active

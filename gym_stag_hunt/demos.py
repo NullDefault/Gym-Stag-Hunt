@@ -1,14 +1,16 @@
 import time
 
 from gym_stag_hunt.envs import ClassicStagHunt, MarkovStagHunt
+from gym_stag_hunt.envs.staghunt_escalation import EscalationStagHunt
 from gym_stag_hunt.envs.staghunt_harvest import HarvestStagHunt
 
 ENVS = {
     'CLASSIC': ClassicStagHunt,
     'MARKOV': MarkovStagHunt,
-    'HARVEST': HarvestStagHunt
+    'HARVEST': HarvestStagHunt,
+    'ESCALATION': EscalationStagHunt
 }
-ENV = 'HARVEST'
+ENV = 'ESCALATION'
 
 if __name__ == "__main__":
     env = ENVS[ENV](obs_type='image')
