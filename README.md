@@ -2,6 +2,45 @@
 
 The repository contains an implementation of a Markov Stag Hunt - a multi agent grid-based game as described in [this paper](https://arxiv.org/abs/1709.02865). The core goal of the project is to offer a robust, efficient, and customizable environment for exploring prosocial behavior in multi agent reinforcement learning. Feedback and requests for features are welcome.
 
+---
+
+## Classic Stag Hunt
+
+A 2x2 Stag Hunt game as usually described in game theory literature. If both agents choose to hunt, they each earn the ```stag_reward```. If one agent chooses to hunt, but the other one doesn't, the agent is punished with the ```mauling_punishment```. An agent which chooses to forage, always earns a guaranteed ```forage_reward```.
+
+**Observations**: No observations, although last taken agent actions are returned in place of the observation.  
+**Actions**: Cooperate or Defect, encoding is ```COOPERATE=0, DEFECT=1```.
+
+### Config Parameters
+**param** = format = default value:
+> Description
+
+**stag_reward** = int = 5:
+> Reinforcement reward for when agents catch the stag by occupying the same cell as it at the same time. Expected to be positive.
+
+**forage_reward** = int = 1:
+> Reinforcement reward for harvesting a plant. Expected to be positive.
+
+**mauling_punishment** = int = -5:
+> Reinforcement reward (or, rather, punishment) for getting mauled by a stag. Expected to be negative.
+
+### Example Render
+
+```
+      B   
+    C   D 
+   ╔══╦══╗
+ C ║AB║  ║
+   ║  ║  ║
+A  ╠══╬══╣
+   ║  ║  ║
+ D ║  ║  ║
+   ╚══╩══╝
+```
+A and B are cooperating here.
+
+---
+
 ## Markov Stag Hunt
 
 Two agents start off in the top two corners of a ```grid_size[0]```x```grid_size[1]``` grid. A stag is placed in the center of the grid. ```forage_quantity``` plants are then placed in ```forage_quantity``` random unoccupied cells. In each time step, each agent moves up, down, left or right, and the stag 
@@ -65,40 +104,7 @@ time steps (```episodes_per_game```), the game is considered done and the enviro
 **mauling_punishment** = int = -5:
 > Reinforcement reward (or, rather, punishment) for getting mauled by a stag. Expected to be negative.
 
-## Classic Stag Hunt
-
-A 2x2 Stag Hunt game as usually described in game theory literature. If both agents choose to hunt, they each earn the ```stag_reward```. If one agent chooses to hunt, but the other one doesn't, the agent is punished with the ```mauling_punishment```. An agent which chooses to forage, always earns a guaranteed ```forage_reward```.
-
-**Observations**: No observations, although last taken agent actions are returned in place of the observation.  
-**Actions**: Cooperate or Defect, encoding is ```COOPERATE=0, DEFECT=1```.
-
-### Config Parameters
-**param** = format = default value:
-> Description
-
-**stag_reward** = int = 5:
-> Reinforcement reward for when agents catch the stag by occupying the same cell as it at the same time. Expected to be positive.
-
-**forage_reward** = int = 1:
-> Reinforcement reward for harvesting a plant. Expected to be positive.
-
-**mauling_punishment** = int = -5:
-> Reinforcement reward (or, rather, punishment) for getting mauled by a stag. Expected to be negative.
-
-### Example Render
-
-```
-      B   
-    C   D 
-   ╔══╦══╗
- C ║AB║  ║
-   ║  ║  ║
-A  ╠══╬══╣
-   ║  ║  ║
- D ║  ║  ║
-   ╚══╩══╝
-```
-A and B are cooperating here.
+---
 
 ## Harvest
 
@@ -154,6 +160,51 @@ Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_si
 **mature_reward** = int = 2:
 > Reward both agents get when one of them harvests a mature plant.
 
+---
+
+## Escalation
+
+Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_size[1]``` grid. A marker (a sleeping stag) appears on one of the squares. If the agents step on the square together, they both receive +1 reinforcement, at which point the marker moves to an adjacent cell (the stag wakes up and runs away). If the agents step together onto the next square, they receive 1 point. If at any time an agent breaks the streak (eg. by stepping off the path), the other agent receives a penalty of some multiplier (```streak_break_punishment_factor```) times the current length T of the streak and the game ends. The current streak length T is a part of the observation.
+
+**Observations**: RGB pixel array or coordinate array with boolean tuples signifying entity presence.  
+**Actions**: Left, down, right or up on the grid. Encoding is ```LEFT=0, DOWN=1, RIGHT=2, UP=3```.
+
+#### PyGame Rendering / Image Observation
+<p align="center">
+  <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/escalation_screenshot.png?raw=true" />
+</p>
+
+#### Matrix Printout / Coordinate Observation
+```
+╔════════════════════════════╗
+║ ·A   ·    ·    ·    · B  · ║
+║ ·    ·    ·    ·    ·    · ║
+║ ·    ·    ·    ·    ·    · ║
+║ ·    ·  M ·    ·    ·    · ║
+║ ·    ·    ·    ·    ·    · ║
+╚════════════════════════════╝
+```
+
+### Config Parameters
+**param** = format = default value:
+> Description
+
+**grid_size** = (N, M) = (5, 5): 
+> Dimensions of the simulation grid. M x N should be equal to at least 3. 
+
+**screen_size** = (X, Y) = (600, 600):
+> Dimensions of the virtual display where the game will render. Irrelevant if pygame will not be used.
+  
+**obs_type** = 'image' or 'coords' = 'image': 
+> What type of observation you want. Image gets you a coordinate array with RGB tuples corresponding to pixel color. Coords gets you a coordinate array with boolean tuples of size 4 signifying the presence of entities in that cell (index 0 is agent A, index 1 is agent B, index 2 is young plant, index 3 is mature plant).  
+
+**load_renderer** = bool = False: 
+> Used if you want to render some iterations when using coordinate observations. Irrelevant when using image observations.  
+
+**streak_break_punishment_factor** = float = 0.5:
+> The factor for calculating the negative reinforcement.
+
+---
 
 # Installation
 
