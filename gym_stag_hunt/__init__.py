@@ -14,3 +14,8 @@ register(
     id='StagHunt-Harvest-v0',
     entry_point='gym_stag_hunt.envs:HarvestStagHunt'
 )
+
+register(
+    id='StagHunt-Escalation-v0',
+    entry_point='gym_stag_hunt.envs:EscalationStagHunt'
+)

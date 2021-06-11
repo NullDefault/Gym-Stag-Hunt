@@ -2,7 +2,8 @@ from sys import stdout
 
 symbol_dict = {
     'markov': ('S', 'P'),
-    'harvest': ('p', 'P')
+    'harvest': ('p', 'P'),
+    'escalation': 'M'
 }
 
 
@@ -17,7 +18,10 @@ def print_matrix(matrix, game):
             cell.append('A') if col[0] == 1 else cell.append(' ')
             cell.append('B') if col[1] == 1 else cell.append(' ')
             cell.append(symbols[0]) if col[2] == 1 else cell.append(' ')
-            cell.append(symbols[1]) if col[3] == 1 else cell.append(' ')
+            if game != 'escalation':
+                cell.append(symbols[1]) if col[3] == 1 else cell.append(' ')
+            else:
+                cell.append(' ')
             stdout.write(''.join(cell) + '·')
         stdout.write(' ║')
         stdout.write('\n')

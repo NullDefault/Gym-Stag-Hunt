@@ -13,7 +13,7 @@ ENVS = {
 ENV = 'ESCALATION'
 
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='image')
+    env = ENVS[ENV](obs_type='coords')
 
     env.reset()
     for i in range(10000):

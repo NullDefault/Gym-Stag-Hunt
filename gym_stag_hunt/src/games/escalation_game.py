@@ -9,7 +9,7 @@ Entity Keys
 """
 A_AGENT = 0
 B_AGENT = 1
-MARK = 3
+MARK = 2
 
 
 class Escalation(AbstractGridGame):
@@ -108,7 +108,7 @@ class Escalation(AbstractGridGame):
                  [[0 0 0 0] [0 0 1 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
                  Which translates to there being a stag in the second column of this row
         """
-        matrix = np.full((self._grid_size[0], self._grid_size[1], 4), False, dtype=bool)
+        matrix = np.full((self._grid_size[0], self._grid_size[1], 3), False, dtype=bool)
         a, b, mark = self.A_AGENT, self.B_AGENT, self.MARK
 
         matrix[a[0]][a[1]][A_AGENT]           = True
@@ -123,7 +123,7 @@ class Escalation(AbstractGridGame):
         :return:
         """
         self._reset_agents()
-        self._mark = (randint(0, self.GRID_W), randint(0, self.GRID_H))
+        self._mark = (randint(0, self.GRID_W - 1), randint(0, self.GRID_H - 1))
 
     """
     Properties
