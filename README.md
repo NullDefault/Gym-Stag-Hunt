@@ -134,7 +134,7 @@ Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_si
 > Dimensions of the virtual display where the game will render. Irrelevant if pygame will not be used.
   
 **obs_type** = 'image' or 'coords' = 'image': 
-> What type of observation you want. Image gets you a coordinate array with RGB tuples corresponding to pixel color. Coords gets you a coordinate array with boolean tuples of size 4 signifying the presence of entities in that cell (index 0 is agent A, index 1 is agent B, index 2 is stag, index 3 is plant).  
+> What type of observation you want. Image gets you a coordinate array with RGB tuples corresponding to pixel color. Coords gets you a coordinate array with boolean tuples of size 4 signifying the presence of entities in that cell (index 0 is agent A, index 1 is agent B, index 2 is young plant, index 3 is mature plant).  
 
 **load_renderer** = bool = False: 
 > Used if you want to render some iterations when using coordinate observations. Irrelevant when using image observations.  
