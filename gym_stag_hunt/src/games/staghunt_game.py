@@ -1,8 +1,7 @@
 from itertools import product
 from math import hypot
 from random import choice
-
-import numpy as np
+from numpy import zeros, flipud, full, rot90
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame, overlaps_entity
 
@@ -56,7 +55,7 @@ class StagHunt(AbstractGridGame):
         self._eps_per_game  = episodes_per_game             # record episodes per game as attribute
 
         # Entity Positions
-        self._stag_pos   = np.zeros(2, dtype=int)
+        self._stag_pos   = zeros(2, dtype=int)
         self._plants_pos = []
         self.reset_entities()                               # place the entities on the grid
 
@@ -108,7 +107,7 @@ class StagHunt(AbstractGridGame):
             coords.remove(plant)
 
         chosen_coords = choice(coords)
-        new_pos = np.zeros(2, dtype=int)
+        new_pos = zeros(2, dtype=int)
         new_pos[0], new_pos[1] = chosen_coords[0], chosen_coords[1]
 
         return new_pos
@@ -237,7 +236,7 @@ class StagHunt(AbstractGridGame):
                  [[0 0 0 0] [0 0 1 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
                  Which translates to there being a stag in the second column of this row
         """
-        matrix = np.full((self._grid_size[0], self._grid_size[1], 4), False, dtype=bool)
+        matrix = full((self._grid_size[0], self._grid_size[1], 4), False, dtype=bool)
         a, b, stag, plants = self.A_AGENT, self.B_AGENT, self.STAG, self.PLANTS
 
         matrix[a[0]][a[1]][A_AGENT]           = True
@@ -246,7 +245,7 @@ class StagHunt(AbstractGridGame):
         for plant in plants:
             matrix[plant[0]][plant[1]][PLANT] = True
 
-        return np.flipud(np.rot90(matrix))
+        return flipud(rot90(matrix))
 
     """
     Movement Methods

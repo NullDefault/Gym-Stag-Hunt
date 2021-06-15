@@ -1,7 +1,7 @@
 from itertools import product
 from random import choice, uniform
 
-import numpy as np
+from numpy import flipud, rot90, zeros, full
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 
@@ -96,7 +96,7 @@ class Harvest(AbstractGridGame):
                 pass
 
         chosen_coords = choice(coords)
-        new_pos = np.zeros(2, dtype=int)
+        new_pos = zeros(2, dtype=int)
         new_pos[0], new_pos[1] = chosen_coords[0], chosen_coords[1]
 
         return new_pos
@@ -210,7 +210,7 @@ class Harvest(AbstractGridGame):
                  [[0 0 0 0] [0 0 1 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
                  Which translates to there being a stag in the second column of this row
         """
-        matrix = np.full((self._grid_size[0], self._grid_size[1], 4), False, dtype=bool)
+        matrix = full((self._grid_size[0], self._grid_size[1], 4), False, dtype=bool)
         a, b, plants = self.A_AGENT, self.B_AGENT, self.PLANTS
 
         matrix[a[0]][a[1]][A_AGENT]           = True
@@ -221,7 +221,7 @@ class Harvest(AbstractGridGame):
             plant_age = M_PLANT if maturity_flags[idx] is True else Y_PLANT
             matrix[plant[0]][plant[1]][plant_age] = True
 
-        return np.flipud(np.rot90(matrix))
+        return flipud(rot90(matrix))
 
     def reset_entities(self):
         """

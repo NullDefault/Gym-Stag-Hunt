@@ -6,7 +6,8 @@ setup(
     author="David Nesterov-Rappoport",
     author_email="davisha999@gmail.com",
     description="Markov stag hunt environment for openai gym",
-    long_description="This package is based on openai-gym for running experiments on Markov stag hunt games.",
+    long_description="This package is based on openai-gym and created for running experiments on Markov stag hunt "
+                     "games.",
     long_description_content_type="text/markdown",
     url="https://github.com/NullDefault/gym-stag-hunt",
     packages=find_packages(),

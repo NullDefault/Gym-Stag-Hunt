@@ -1,6 +1,6 @@
 from random import randint
 
-import numpy as np
+from numpy import flipud, rot90, full
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame, overlaps_entity
 
@@ -108,14 +108,14 @@ class Escalation(AbstractGridGame):
                  [[0 0 0 0] [0 0 1 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
                  Which translates to there being a stag in the second column of this row
         """
-        matrix = np.full((self._grid_size[0], self._grid_size[1], 3), False, dtype=bool)
+        matrix = full((self._grid_size[0], self._grid_size[1], 3), False, dtype=bool)
         a, b, mark = self.A_AGENT, self.B_AGENT, self.MARK
 
         matrix[a[0]][a[1]][A_AGENT]           = True
         matrix[b[0]][b[1]][B_AGENT]           = True
         matrix[mark[0]][mark[1]][MARK]        = True
 
-        return np.flipud(np.rot90(matrix))
+        return flipud(rot90(matrix))
 
     def reset_entities(self):
         """

@@ -1,4 +1,4 @@
-import time
+from time import sleep
 
 from gym_stag_hunt.envs import ClassicStagHunt, MarkovStagHunt
 from gym_stag_hunt.envs.staghunt_escalation import EscalationStagHunt
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     env.reset()
     for i in range(10000):
         obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
-        time.sleep(.6)
+        sleep(.6)
         if ENV == 'CLASSIC':
             env.render(rewards=rewards)
         else:
