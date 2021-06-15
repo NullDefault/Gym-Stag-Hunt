@@ -3,7 +3,7 @@ from gym.spaces import Discrete, Box
 from numpy import int8, int64
 
 from gym_stag_hunt.src.games.harvest_game import Harvest
-from gym_stag_hunt.src.rendering.utils import print_matrix
+from gym_stag_hunt.src.utils import print_matrix
 
 
 class HarvestStagHunt(Env):

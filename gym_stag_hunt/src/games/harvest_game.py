@@ -51,7 +51,7 @@ class Harvest(AbstractGridGame):
         # If rendering is enabled, we will instantiate the rendering pipeline
         if obs_type == 'image' or load_renderer:
             # we don't want to import pygame if we aren't going to use it, so that's why this import is here
-            from gym_stag_hunt.src.rendering.harvest_renderer import HarvestRenderer
+            from gym_stag_hunt.src.renderers.harvest_renderer import HarvestRenderer
             self._renderer = HarvestRenderer(game=self, window_title=window_title, screen_size=screen_size)
 
     """

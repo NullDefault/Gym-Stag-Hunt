@@ -4,15 +4,16 @@ from pygame import image, Rect, transform
 from pygame.sprite import DirtySprite
 
 base_path = os.path.dirname(os.path.dirname(__file__))
+entity_path = os.path.join(base_path, 'assets/entities')
 
 sprite_dict = {
-    'a_agent': os.path.join(base_path, 'assets/blue_agent.png'),
-    'b_agent': os.path.join(base_path, 'assets/red_agent.png'),
-    'stag': os.path.join(base_path, 'assets/stag.png'),
-    'plant': os.path.join(base_path, 'assets/plant_fruit.png'),
-    'plant_young': os.path.join(base_path, 'assets/plant_no_fruit.png'),
-    'mark': os.path.join(base_path, 'assets/mark.png'),
-    'mark_active': os.path.join(base_path, 'assets/mark_active.png')
+    'a_agent': os.path.join(entity_path, 'blue_agent.png'),
+    'b_agent': os.path.join(entity_path, 'red_agent.png'),
+    'stag': os.path.join(entity_path, 'stag.png'),
+    'plant': os.path.join(entity_path, 'plant_fruit.png'),
+    'plant_young': os.path.join(entity_path, 'plant_no_fruit.png'),
+    'mark': os.path.join(entity_path, 'mark.png'),
+    'mark_active': os.path.join(entity_path, 'mark_active.png')
 }
 
 

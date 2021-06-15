@@ -1,5 +1,5 @@
 from gym_stag_hunt.src.entities import HarvestPlant
-from gym_stag_hunt.src.rendering.abstract_renderer import AbstractRenderer
+from gym_stag_hunt.src.renderers.abstract_renderer import AbstractRenderer
 
 
 class HarvestRenderer(AbstractRenderer):

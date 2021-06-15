@@ -53,7 +53,7 @@ time steps (```episodes_per_game```), the game is considered done and the enviro
 
 #### PyGame Rendering / Image Observation
 <p align="center">
-  <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/markov_screenshot.png?raw=true" />
+  <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/screenshots/markov_screenshot.png?raw=true" />
 </p>
 
 #### Matrix Printout / Coordinate Observation
@@ -115,7 +115,7 @@ Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_si
 
 #### PyGame Rendering / Image Observation
 <p align="center">
-  <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/harvest_screenshot.png?raw=true" />
+  <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/screenshots/harvest_screenshot.png?raw=true" />
 </p>
 
 #### Matrix Printout / Coordinate Observation
@@ -171,7 +171,7 @@ Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_si
 
 #### PyGame Rendering / Image Observation
 <p align="center">
-  <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/escalation_screenshot.png?raw=true" />
+  <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/screenshots/escalation_screenshot.png?raw=true" />
 </p>
 
 #### Matrix Printout / Coordinate Observation

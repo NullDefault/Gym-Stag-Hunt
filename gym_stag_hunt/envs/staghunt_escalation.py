@@ -3,7 +3,7 @@ from gym.spaces import Discrete, Box
 from numpy import int8, int64, Inf
 
 from gym_stag_hunt.src.games.escalation_game import Escalation
-from gym_stag_hunt.src.rendering.utils import print_matrix
+from gym_stag_hunt.src.utils import print_matrix
 
 
 class EscalationStagHunt(Env):
