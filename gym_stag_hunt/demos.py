@@ -13,7 +13,7 @@ ENVS = {
 ENV = 'HARVEST'
 
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='image', max_plants=21)
+    env = ENVS[ENV](obs_type='image')
 
     env.reset()
     for i in range(10000):

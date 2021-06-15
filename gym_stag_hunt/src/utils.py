@@ -39,7 +39,7 @@ def overlaps_entity(a, b):
     :param b: (X, Y) tuple for entity 2
     :return: True if they are on the same cell, False otherwise
     """
-    return (a==b).all()
+    return (a == b).all()
 
 
 def place_entity_in_unoccupied_cell(used_coordinates, grid_dims):

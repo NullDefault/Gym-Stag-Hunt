@@ -13,7 +13,8 @@ sprite_dict = {
     'plant': os.path.join(entity_path, 'plant_fruit.png'),
     'plant_young': os.path.join(entity_path, 'plant_no_fruit.png'),
     'mark': os.path.join(entity_path, 'mark.png'),
-    'mark_active': os.path.join(entity_path, 'mark_active.png')
+    'mark_active': os.path.join(entity_path, 'mark_active.png'),
+    'game_icon': os.path.join(base_path, 'assets/icon.png')
 }
 
 
@@ -27,9 +28,9 @@ def load_img(path):
 
 def get_gui_window_icon():
     """
-    :return: The icon to display in the render window (for now, it's just the stag sprite).
+    :return: The icon to display in the render windo.
     """
-    return image.load(sprite_dict['stag'])
+    return image.load(sprite_dict['game_icon'])
 
 
 class Entity(DirtySprite):
