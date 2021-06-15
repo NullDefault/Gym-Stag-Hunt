@@ -1,9 +1,9 @@
-from itertools import product
-from random import choice, uniform
+from random import uniform
 
-from numpy import flipud, rot90, zeros, full
+from numpy import flipud, rot90, full
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
+from gym_stag_hunt.src.utils import overlaps_entity, place_entity_in_unoccupied_cell
 
 """
 Entity Keys
@@ -64,42 +64,9 @@ class Harvest(AbstractGridGame):
         """
         new_plants = []
         for x in range(self._max_plants):
-            new_plants.append(self._place_entity_in_unoccupied_cell())
+            new_plants.append(place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
+                                                              used_coordinates=new_plants+self.AGENTS))
         return new_plants
-
-    def _place_entity_in_unoccupied_cell(self, existing_plants=None):
-        """
-        Places an individual plant on a position on the grid currently unoccupied by anything.
-        :param existing_plants: The positions of the other plants
-        :return: a tuple corresponding to the chosen position
-        """
-        if existing_plants is None:
-            existing_plants = self._plants
-
-        # get and parse all the entity positions
-        a = (self.A_AGENT[0], self.A_AGENT[1])
-        b = (self.B_AGENT[0], self.B_AGENT[1])
-
-        # First we make a list of all the possible x,y coordinates in our grid
-        coords = list(product(range(0, self.GRID_W), range(0, self.GRID_H)))
-
-        # Then we remove used coordinates from consideration
-        if a in coords:             # the if check is here to prevent issues when removing already removed coordinates,
-            coords.remove(a)        # which is what happens if two entities are on an overlapping grid cell
-        if b in coords:
-            coords.remove(b)
-        for plant in existing_plants:
-            coord = plant[0], plant[1]
-            try:
-                coords.remove(coord)
-            except ValueError:
-                pass
-
-        chosen_coords = choice(coords)
-        new_pos = zeros(2, dtype=int)
-        new_pos[0], new_pos[1] = chosen_coords[0], chosen_coords[1]
-
-        return new_pos
 
     def _respawn_plants(self):
         """
@@ -108,7 +75,8 @@ class Harvest(AbstractGridGame):
         """
         plants = self.PLANTS
         for eaten_plant in self._tagged_plants:
-            plants[eaten_plant] = self._place_entity_in_unoccupied_cell(existing_plants=plants)
+            plants[eaten_plant] = place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
+                                                                  used_coordinates=plants+self.AGENTS)
         self._tagged_plants = []
         self._plants = plants
 
@@ -124,7 +92,7 @@ class Harvest(AbstractGridGame):
         """
         for x in range(0, len(plants)):
             pos = plants[x]
-            if a[0] == pos[0] and a[1] == pos[1]:
+            if overlaps_entity(a, pos):
                 is_mature = self._maturity_flags[x]
                 if x not in self._tagged_plants:
                     self._tagged_plants.append(x)

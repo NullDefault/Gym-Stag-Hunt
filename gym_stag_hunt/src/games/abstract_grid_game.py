@@ -12,18 +12,6 @@ RIGHT = 2
 UP = 3
 
 
-def overlaps_entity(a, b):
-    """
-    :param a: (X, Y) tuple for entity 1
-    :param b: (X, Y) tuple for entity 2
-    :return: True if they are on the same cell, False otherwise
-    """
-    if a[0] == b[0] and a[1] == b[1]:
-        return True
-    else:
-        return False
-
-
 class AbstractGridGame(ABC):
     def __init__(self,
                  grid_size,
@@ -161,7 +149,7 @@ class AbstractGridGame(ABC):
 
     @property
     def AGENTS(self):
-        return self._a_pos, self._b_pos
+        return [self._a_pos, self._b_pos]
 
     @property
     def A_AGENT(self):

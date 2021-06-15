@@ -1,4 +1,8 @@
+from itertools import product
+from random import choice
 from sys import stdout
+
+from numpy import all
 
 symbol_dict = {
     'markov': ('S', 'P'),
@@ -27,3 +31,29 @@ def print_matrix(matrix, game):
         stdout.write('\n')
     stdout.write('╚════════════════════════════╝\n\r')
     stdout.flush()
+
+
+def overlaps_entity(a, b):
+    """
+    :param a: (X, Y) tuple for entity 1
+    :param b: (X, Y) tuple for entity 2
+    :return: True if they are on the same cell, False otherwise
+    """
+    return (a==b).all()
+
+
+def place_entity_in_unoccupied_cell(used_coordinates, grid_dims):
+    """
+    Returns a random unused coordinate.
+    :param used_coordinates: a list of already used coordinates
+    :param grid_dims: dimensions of the grid so we know what a valid coordinate is
+    :return: the chosen x, y coordinate
+    """
+    all_coords = list(product(list(range(grid_dims[0])), list(range(grid_dims[1]))))
+
+    for coord in used_coordinates:
+        for test in all_coords:
+            if all(test == coord):
+                all_coords.remove(test)
+
+    return choice(all_coords)

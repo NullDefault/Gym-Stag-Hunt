@@ -2,7 +2,8 @@ from random import randint
 
 from numpy import flipud, rot90, full
 
-from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame, overlaps_entity
+from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
+from gym_stag_hunt.src.utils import overlaps_entity
 
 """
 Entity Keys
