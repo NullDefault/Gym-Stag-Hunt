@@ -2,9 +2,9 @@ from gym_stag_hunt.src.entities import Entity
 from gym_stag_hunt.src.renderers.abstract_renderer import AbstractRenderer
 
 
-class MarkovRenderer(AbstractRenderer):
+class HuntRenderer(AbstractRenderer):
     def __init__(self, game, window_title, screen_size):
-        super(MarkovRenderer, self).__init__(game=game, window_title=window_title, screen_size=screen_size)
+        super(HuntRenderer, self).__init__(game=game, window_title=window_title, screen_size=screen_size)
 
         cell_sizes = self.CELL_SIZE
         entity_positions = self._game.ENTITY_POSITIONS

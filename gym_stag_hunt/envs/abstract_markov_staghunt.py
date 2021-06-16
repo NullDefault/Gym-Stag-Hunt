@@ -5,7 +5,9 @@ from gym import Env
 from gym_stag_hunt.src.utils import print_matrix
 
 
-class BaseMarkovStagHuntEnv(Env, ABC):
+class AbstractMarkovStagHuntEnv(Env, ABC):
+    metadata = {'render.modes': ['human']}
+
     def __init__(self,
                  grid_size=(5, 5),
                  obs_type='image',
@@ -18,7 +20,7 @@ class BaseMarkovStagHuntEnv(Env, ABC):
         if total_cells < 3:
             raise AttributeError('Grid is too small. Please specify a larger grid size.')
 
-        super(BaseMarkovStagHuntEnv, self).__init__()
+        super(AbstractMarkovStagHuntEnv, self).__init__()
 
         self.obs_type = obs_type
         self.done = False
@@ -26,7 +28,7 @@ class BaseMarkovStagHuntEnv(Env, ABC):
 
     def step(self, actions):
         """
-        Take a single step in the simulation (episode, iteration, what have you)
+        Run one timestep of the environment's dynamics.
         :param actions: ints signifying actions for the agents. You can pass one, in which case the second agent does a
                         random move, or two, in which case each agents takes the specified action.
         :return: observation, rewards, is the game done, additional info
@@ -50,20 +52,18 @@ class BaseMarkovStagHuntEnv(Env, ABC):
         :param mode: rendering mode
         :return:
         """
-        if self.obs_type == 'image':
-            if mode == "human":
+        def print_array(obs):
+            if obs is None:
+                obs = self.game.get_observation().astype(int)
+            else:
+                obs = obs.astype(int)
+            print_matrix(obs, self.game_title)
+
+        if mode == 'human':
+            if self.obs_type == 'image':
                 self.game.RENDERER.render_on_display()
-        else:
-            if mode == "human":
-                if self.game.RENDERER:
-                    self.game.RENDERER.update()
-                    self.game.RENDERER.render_on_display()
-                else:
-                    if obs is None:
-                        obs = self.game.get_observation().astype(int)
-                    else:
-                        obs = obs.astype(int)
-                    print_matrix(obs, self.game_title)
+            else:
+                print_array(obs)
 
     def close(self):
         """

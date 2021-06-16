@@ -14,7 +14,7 @@ ENVS = {
 ENV = 'HUNT'
 
 if __name__ == "__main__":
-    env = ENVS[ENV]()
+    env = ENVS[ENV](obs_type='image')
 
     env.reset()
     for i in range(10000):

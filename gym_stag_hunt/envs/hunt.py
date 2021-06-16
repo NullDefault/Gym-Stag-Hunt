@@ -1,11 +1,11 @@
 from gym.spaces import Discrete, Box
 from numpy import int8, int64
 
-from gym_stag_hunt.envs.base_markov_staghunt import BaseMarkovStagHuntEnv
+from gym_stag_hunt.envs.abstract_markov_staghunt import AbstractMarkovStagHuntEnv
 from gym_stag_hunt.src.games.staghunt_game import StagHunt
 
 
-class HuntEnv(BaseMarkovStagHuntEnv):
+class HuntEnv(AbstractMarkovStagHuntEnv):
     def __init__(self,
                  grid_size=(5, 5),
                  screen_size=(600, 600),
