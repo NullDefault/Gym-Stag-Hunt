@@ -10,10 +10,10 @@ ENVS = {
     'HARVEST': HarvestStagHunt,
     'ESCALATION': EscalationStagHunt
 }
-ENV = 'HARVEST'
+ENV = 'CLASSIC'
 
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='image')
+    env = ENVS[ENV]()
 
     env.reset()
     for i in range(10000):

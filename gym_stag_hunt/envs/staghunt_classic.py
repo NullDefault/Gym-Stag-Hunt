@@ -1,4 +1,4 @@
-from random import randint
+from numpy.random import randint
 from sys import stdout
 
 from gym import Env
@@ -12,11 +12,14 @@ class ClassicStagHunt(Env):
     def __init__(self,
                  stag_reward=5,
                  forage_reward=1,
-                 mauling_punishment=-5):
+                 mauling_punishment=-5,
+                 eps_per_game=1):
         """
         :param stag_reward: How much reinforcement the agents get for catching the stag
         :param forage_reward: How much reinforcement the agents get for harvesting a plant
         :param mauling_punishment: How much reinforcement the agents get for trying to catch a stag alone (MUST be neg.)
+        :param eps_per_game: How many games happen before the internal done flag is set to True. Only included for
+                             the sake of convenience.
         """
 
         if not (stag_reward > forage_reward >= 0 > mauling_punishment):
@@ -31,6 +34,8 @@ class ClassicStagHunt(Env):
         self.reward_range = (mauling_punishment, stag_reward)
 
         self.done = False
+        self.ep = 0
+        self.final_ep = eps_per_game
         self.seed()
 
         self.action_space = Discrete(2)             # cooperate or defect
@@ -40,12 +45,15 @@ class ClassicStagHunt(Env):
         """
         Play one stag hunt game.
         :param actions: ints signifying actions for the agents. You can pass one, in which case the second agent does a
-                        random move, or two, in which case each agents takes the specified action.
+                        random move, or two, in which case each agent takes the specified action.
         :return: observation, rewards, is the game done, additional info
-                 Note: this environment formally doesn't have any observations, so the passed agent actions are returned
-                       instead.
         """
-        done = False
+        self.ep = self.ep + 1
+        if self.ep >= self.final_ep:
+            done = True
+            self.ep = 0
+        else:
+            done = False
 
         if isinstance(actions, list):
             a_action = actions[0]
@@ -75,6 +83,7 @@ class ClassicStagHunt(Env):
         Reset the game state
         """
         self.done = False
+        self.ep = 0
 
     def render(self, mode="human", rewards=None):
         """
@@ -113,8 +122,4 @@ class ClassicStagHunt(Env):
             stdout.flush()
 
     def close(self):
-        """
-        Closes all needed resources
-        :return:
-        """
         quit()
