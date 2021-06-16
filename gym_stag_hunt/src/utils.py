@@ -5,7 +5,7 @@ from sys import stdout
 from numpy import all
 
 symbol_dict = {
-    'markov': ('S', 'P'),
+    'hunt': ('S', 'P'),
     'harvest': ('p', 'P'),
     'escalation': 'M'
 }

@@ -164,7 +164,9 @@ class Harvest(AbstractGridGame):
 
         obs = self.get_observation()
 
-        return obs, iteration_rewards, False
+        info = {}
+
+        return obs, iteration_rewards, False, info
 
     def _coord_observation(self):
         """

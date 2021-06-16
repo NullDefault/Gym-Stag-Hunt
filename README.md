@@ -4,7 +4,7 @@ The repository contains an implementation of a Markov Stag Hunt - a multi agent 
 
 ---
 
-## Classic Stag Hunt
+## Simple Stag Hunt
 
 A 2x2 Stag Hunt game as usually described in game theory literature. If both agents choose to hunt, they each earn the ```stag_reward```. If one agent chooses to hunt, but the other one doesn't, the agent is punished with the ```mauling_punishment```. An agent which chooses to forage, always earns a guaranteed ```forage_reward```.
 
@@ -41,7 +41,7 @@ A and B are cooperating here.
 
 ---
 
-## Markov Stag Hunt
+## Hunt
 
 Two agents start off in the top two corners of a ```grid_size[0]```x```grid_size[1]``` grid. A stag is placed in the center of the grid. ```forage_quantity``` plants are then placed in ```forage_quantity``` random unoccupied cells. In each time step, each agent moves up, down, left or right, and the stag 
 either moves towards the nearest agent (default) or takes a random move. At the end of the time step, if an agent is on top of a plant, it **harvests** it getting
@@ -53,7 +53,7 @@ time steps (```episodes_per_game```), the game is considered done and the enviro
 
 #### PyGame Rendering / Image Observation
 <p align="center">
-  <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/screenshots/markov_screenshot.png?raw=true" />
+  <img src="https://github.com/NullDefault/gym-stag-hunt/blob/master/gym_stag_hunt/assets/screenshots/hunt_screenshot.png?raw=true" />
 </p>
 
 #### Matrix Printout / Coordinate Observation
@@ -221,7 +221,7 @@ import gym
 import gym_stag_hunt
 import time
 
-env = gym.make("StagHunt-v0", obs_type='image', ...) # you can pass config parameters here
+env = gym.make("StagHunt-Hunt-v0", obs_type='image', ...) # you can pass config parameters here
 env.reset()
 for iteration in range(1000):
   time.sleep(.2)

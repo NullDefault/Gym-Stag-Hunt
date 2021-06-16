@@ -193,7 +193,9 @@ class StagHunt(AbstractGridGame):
 
         obs = self.get_observation()
 
-        return obs, iteration_rewards, game_done
+        info = {}
+
+        return obs, iteration_rewards, game_done, info
 
     def _coord_observation(self):
         """

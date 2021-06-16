@@ -1,51 +1,28 @@
-from gym import Env
-from gym.spaces import Discrete, Box
-from numpy import int8, int64, Inf
+from abc import ABC
 
-from gym_stag_hunt.src.games.escalation_game import Escalation
+from gym import Env
+
 from gym_stag_hunt.src.utils import print_matrix
 
 
-class EscalationStagHunt(Env):
+class BaseMarkovStagHuntEnv(Env, ABC):
     def __init__(self,
                  grid_size=(5, 5),
-                 screen_size=(600, 600),
                  obs_type='image',
-                 load_renderer=False,
-                 streak_break_punishment_factor=0.5
                  ):
         """
         :param grid_size: A (W, H) tuple corresponding to the grid dimensions. Although W=H is expected, W!=H works also
-        :param screen_size: A (W, H) tuple corresponding to the pixel dimensions of the game window
         :param obs_type: Can be 'image' for pixel-array based observations, or 'coords' for just the entity coordinates
         """
         total_cells = grid_size[0] * grid_size[1]
         if total_cells < 3:
             raise AttributeError('Grid is too small. Please specify a larger grid size.')
 
-        super(EscalationStagHunt, self).__init__()
+        super(BaseMarkovStagHuntEnv, self).__init__()
 
         self.obs_type = obs_type
-        self.streak_break_punishment_factor = streak_break_punishment_factor
-        self.reward_range = (-Inf, Inf)
-
         self.done = False
         self.seed()
-
-        window_title = "OpenAI Gym - Escalation Stag Hunt (%d x %d)" % grid_size  # create game representation
-        self.game = Escalation(window_title=window_title,
-                               grid_size=grid_size,
-                               screen_size=screen_size,
-                               obs_type=obs_type,
-                               load_renderer=load_renderer,
-                               streak_break_punishment_factor=streak_break_punishment_factor)
-
-        self.action_space = Discrete(4)  # up, down, left, right on the grid
-
-        if obs_type == 'image':  # Observation is the rgb pixel array
-            self.observation_space = Box(0, 255, shape=(screen_size[0], screen_size[1], 3), dtype=int64)
-        elif obs_type == 'coords':  # Observation is an xy matrix with booleans signifying entities in the cell
-            self.observation_space = Box(0, 1, shape=(grid_size[0], grid_size[1], 3), dtype=int8)
 
     def step(self, actions):
         """
@@ -54,9 +31,7 @@ class EscalationStagHunt(Env):
                         random move, or two, in which case each agents takes the specified action.
         :return: observation, rewards, is the game done, additional info
         """
-        obs, reward, done = self.game.update(actions)
-        # Generate Info (If Appropriate)
-        info = {}
+        obs, reward, done, info = self.game.update(actions)
 
         return obs, reward, done, info
 
@@ -88,7 +63,7 @@ class EscalationStagHunt(Env):
                         obs = self.game.get_observation().astype(int)
                     else:
                         obs = obs.astype(int)
-                    print_matrix(obs, 'escalation')
+                    print_matrix(obs, self.game_title)
 
     def close(self):
         """

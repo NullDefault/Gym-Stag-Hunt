@@ -1,16 +1,17 @@
 from time import sleep
 
-from gym_stag_hunt.envs import ClassicStagHunt, MarkovStagHunt
-from gym_stag_hunt.envs.staghunt_escalation import EscalationStagHunt
-from gym_stag_hunt.envs.staghunt_harvest import HarvestStagHunt
+from gym_stag_hunt.envs.simple import SimpleEnv
+from gym_stag_hunt.envs.hunt import HuntEnv
+from gym_stag_hunt.envs.escalation import EscalationEnv
+from gym_stag_hunt.envs.harvest import HarvestEnv
 
 ENVS = {
-    'CLASSIC': ClassicStagHunt,
-    'MARKOV': MarkovStagHunt,
-    'HARVEST': HarvestStagHunt,
-    'ESCALATION': EscalationStagHunt
+    'CLASSIC': SimpleEnv,
+    'HUNT': HuntEnv,
+    'HARVEST': HarvestEnv,
+    'ESCALATION': EscalationEnv
 }
-ENV = 'CLASSIC'
+ENV = 'HUNT'
 
 if __name__ == "__main__":
     env = ENVS[ENV]()
@@ -18,7 +19,7 @@ if __name__ == "__main__":
     env.reset()
     for i in range(10000):
         obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
-        sleep(.6)
+        sleep(.2)
         if ENV == 'CLASSIC':
             env.render(rewards=rewards)
         else:

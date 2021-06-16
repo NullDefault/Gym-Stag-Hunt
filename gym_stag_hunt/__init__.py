@@ -1,21 +1,21 @@
 from gym.envs.registration import register
 
 register(
-    id='StagHunt-Markov-v0',
-    entry_point='gym_stag_hunt.envs:MarkovStagHunt'
+    id='StagHunt-Hunt-v0',
+    entry_point='gym_stag_hunt.envs:HuntEnv'
 )
 
 register(
-    id='StagHunt-Classic-v0',
-    entry_point='gym_stag_hunt.envs:ClassicStagHunt'
+    id='StagHunt-Simple-v0',
+    entry_point='gym_stag_hunt.envs:SimpleEnv'
 )
 
 register(
     id='StagHunt-Harvest-v0',
-    entry_point='gym_stag_hunt.envs:HarvestStagHunt'
+    entry_point='gym_stag_hunt.envs:HarvestEnv'
 )
 
 register(
     id='StagHunt-Escalation-v0',
-    entry_point='gym_stag_hunt.envs:EscalationStagHunt'
+    entry_point='gym_stag_hunt.envs:EscalationEnv'
 )

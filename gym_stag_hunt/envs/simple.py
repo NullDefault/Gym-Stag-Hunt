@@ -8,12 +8,13 @@ COOPERATE = 0
 DEFECT = 1
 
 
-class ClassicStagHunt(Env):
+class SimpleEnv(Env):
     def __init__(self,
                  stag_reward=5,
                  forage_reward=1,
                  mauling_punishment=-5,
-                 eps_per_game=1):
+                 eps_per_game=1
+                 ):
         """
         :param stag_reward: How much reinforcement the agents get for catching the stag
         :param forage_reward: How much reinforcement the agents get for harvesting a plant
@@ -26,20 +27,23 @@ class ClassicStagHunt(Env):
             raise AttributeError('The game does not qualify as a Stag Hunt, please change parameters so that '
                                  'stag_reward > forage_reward >= 0 > mauling_punishment')
 
-        super(ClassicStagHunt, self).__init__()
+        super(SimpleEnv, self).__init__()
 
+        # Reinforcement Variables
         self.stag_reward = stag_reward
         self.forage_reward = forage_reward
         self.mauling_punishment = mauling_punishment
-        self.reward_range = (mauling_punishment, stag_reward)
 
+        # State Variables
         self.done = False
         self.ep = 0
         self.final_ep = eps_per_game
         self.seed()
 
+        # Environment Config
         self.action_space = Discrete(2)             # cooperate or defect
         self.observation_space = Discrete(2)        # last agent actions
+        self.reward_range = (mauling_punishment, stag_reward)
 
     def step(self, actions):
         """
