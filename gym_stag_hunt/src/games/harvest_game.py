@@ -170,28 +170,11 @@ class Harvest(AbstractGridGame):
 
     def _coord_observation(self):
         """
-        :return: 3d array observation of the grid
-        :format: NxN matrix where each index has 4 entries - 0 or 1 depending on if the given entity is in that cell
-                 So an individual row (here of length 5) looks like:
-                 [..[[A, B,    [A, B,    [A, B,    [A, B,    [A, B,
-                     S, P],   S, P],     S, P],    S, P],    S, P]],..]
-                 Where A is A Agent, S is stag e.t.c
-                 An actually printed matrix row will look like this:
-                 [[0 0 0 0] [0 0 1 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
-                 Which translates to there being a stag in the second column of this row
+        :return: tuple of all the entity coordinates
         """
-        matrix = full((self._grid_size[0], self._grid_size[1], 4), False, dtype=bool)
-        a, b, plants = self.A_AGENT, self.B_AGENT, self.PLANTS
-
-        matrix[a[0]][a[1]][A_AGENT]           = True
-        matrix[b[0]][b[1]][B_AGENT]           = True
-
-        maturity_flags = self.MATURITY_FLAGS
-        for idx, plant in enumerate(plants):
-            plant_age = M_PLANT if maturity_flags[idx] is True else Y_PLANT
-            matrix[plant[0]][plant[1]][plant_age] = True
-
-        return flipud(rot90(matrix))
+        shipback = (self.A_AGENT, self.B_AGENT)
+        shipback = shipback, tuple(zip(self.PLANTS, self.MATURITY_FLAGS))
+        return shipback
 
     def reset_entities(self):
         """

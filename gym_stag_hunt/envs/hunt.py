@@ -1,5 +1,5 @@
-from gym.spaces import Discrete, Box
-from numpy import int8, int64
+from gym.spaces import Discrete, Box, MultiDiscrete
+from numpy import int64
 
 from gym_stag_hunt.envs.abstract_markov_staghunt import AbstractMarkovStagHuntEnv
 from gym_stag_hunt.src.games.staghunt_game import StagHunt
@@ -45,7 +45,7 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
         if total_cells < 3:
             raise AttributeError('Grid is too small. Please specify a larger grid size.')
 
-        super(HuntEnv, self).__init__()
+        super(HuntEnv, self).__init__(grid_size=grid_size, obs_type=obs_type)
 
         self.game_title = 'hunt'
         self.stag_reward = stag_reward
@@ -72,4 +72,4 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
         if obs_type == 'image':  # Observation is the rgb pixel array
             self.observation_space = Box(0, 255, shape=(screen_size[0], screen_size[1], 3), dtype=int64)
         elif obs_type == 'coords':  # Observation is an xy matrix with booleans signifying entities in the cell
-            self.observation_space = Box(0, 1, shape=(grid_size[0], grid_size[1], 4), dtype=int8)
+            self.observation_space = MultiDiscrete([3+forage_quantity, 2])

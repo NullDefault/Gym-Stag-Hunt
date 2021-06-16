@@ -1,5 +1,5 @@
-from gym.spaces import Discrete, Box
-from numpy import int8, int64
+from gym.spaces import Discrete, Box, Tuple, MultiDiscrete
+from numpy import int64
 
 from gym_stag_hunt.envs.abstract_markov_staghunt import AbstractMarkovStagHuntEnv
 from gym_stag_hunt.src.games.harvest_game import Harvest
@@ -31,7 +31,7 @@ class HarvestEnv(AbstractMarkovStagHuntEnv):
         if total_cells < 3:
             raise AttributeError('Grid is too small. Please specify a larger grid size.')
 
-        super(HarvestEnv, self).__init__()
+        super(HarvestEnv, self).__init__(grid_size=grid_size, obs_type=obs_type)
 
         self.game_title = 'harvest'
         self.max_plants = max_plants
@@ -58,4 +58,4 @@ class HarvestEnv(AbstractMarkovStagHuntEnv):
         if obs_type == 'image':  # Observation is the rgb pixel array
             self.observation_space = Box(0, 255, shape=(screen_size[0], screen_size[1], 3), dtype=int64)
         elif obs_type == 'coords':  # Observation is an xy matrix with booleans signifying entities in the cell
-            self.observation_space = Box(0, 1, shape=(grid_size[0], grid_size[1], 4), dtype=int8)
+            self.observation_space = Tuple((MultiDiscrete([2, 2]), MultiDiscrete([max_plants, 3])))  # this may be wrong

@@ -2,7 +2,7 @@ from itertools import product
 from random import choice
 from sys import stdout
 
-from numpy import all
+from numpy import all, full
 
 symbol_dict = {
     'hunt': ('S', 'P'),
@@ -10,8 +10,49 @@ symbol_dict = {
     'escalation': 'M'
 }
 
+A_AGENT = 0  # base
+B_AGENT = 1
 
-def print_matrix(matrix, game):
+STAG    = 2  # hunt
+PLANT   = 3
+
+Y_PLANT = 2  # harvest
+M_PLANT = 3
+
+MARK = 2     # escalation
+
+
+def print_matrix(obs, game, grid_size):
+    if game == 'escalation':
+        matrix = full((grid_size[0], grid_size[1], 3), False, dtype=bool)
+    else:
+        matrix = full((grid_size[0], grid_size[1], 4), False, dtype=bool)
+
+    if game == 'hunt':
+        a, b, stag, plants = obs
+        matrix[a[0]][a[1]][A_AGENT]           = True
+        matrix[b[0]][b[1]][B_AGENT]           = True
+        matrix[stag[0]][stag[1]][STAG]        = True
+        for plant in plants:
+            matrix[plant[0]][plant[1]][PLANT] = True
+
+    elif game == 'harvest':
+        a, b, plants = obs
+        matrix[a[0]][a[1]][A_AGENT]           = True
+        matrix[b[0]][b[1]][B_AGENT]           = True
+
+        plants, maturity_flags = zip(*plants)
+
+        for idx, plant in enumerate(plants):
+            plant_age = M_PLANT if maturity_flags[idx] is True else Y_PLANT
+            matrix[plant[0]][plant[1]][plant_age] = True
+
+    elif game == 'escalation':
+        a, b, mark = obs
+        matrix[a[0]][a[1]][A_AGENT]           = True
+        matrix[b[0]][b[1]][B_AGENT]           = True
+        matrix[mark[0]][mark[1]][MARK]        = True
+
     symbols = symbol_dict[game]
 
     stdout.write('╔════════════════════════════╗\n')

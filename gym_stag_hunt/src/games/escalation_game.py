@@ -1,6 +1,6 @@
 from random import randint
 
-from numpy import flipud, rot90, full
+from numpy import zeros
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 from gym_stag_hunt.src.utils import overlaps_entity
@@ -26,7 +26,7 @@ class Escalation(AbstractGridGame):
 
         self._streak_break_punishment_factor = streak_break_punishment_factor
 
-        self._mark = (0, 0)
+        self._mark = zeros(2, dtype=int)
         self._streak_active = False
         self._streak = 0
         self.reset_entities()
@@ -101,24 +101,9 @@ class Escalation(AbstractGridGame):
 
     def _coord_observation(self):
         """
-        :return: 3d array observation of the grid
-        :format: NxN matrix where each index has 4 entries - 0 or 1 depending on if the given entity is in that cell
-                 So an individual row (here of length 5) looks like:
-                 [..[[A, B,    [A, B,    [A, B,    [A, B,    [A, B,
-                     S, P],   S, P],     S, P],    S, P],    S, P]],..]
-                 Where A is A Agent, S is stag e.t.c
-                 An actually printed matrix row will look like this:
-                 [[0 0 0 0] [0 0 1 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
-                 Which translates to there being a stag in the second column of this row
+        :return: list of all the entity coordinates
         """
-        matrix = full((self._grid_size[0], self._grid_size[1], 3), False, dtype=bool)
-        a, b, mark = self.A_AGENT, self.B_AGENT, self.MARK
-
-        matrix[a[0]][a[1]][A_AGENT]           = True
-        matrix[b[0]][b[1]][B_AGENT]           = True
-        matrix[mark[0]][mark[1]][MARK]        = True
-
-        return flipud(rot90(matrix))
+        return self.A_AGENT, self.B_AGENT, self.MARK
 
     def reset_entities(self):
         """
@@ -126,7 +111,7 @@ class Escalation(AbstractGridGame):
         :return:
         """
         self._reset_agents()
-        self._mark = (randint(0, self.GRID_W - 1), randint(0, self.GRID_H - 1))
+        self.MARK = (randint(0, self.GRID_W - 1), randint(0, self.GRID_H - 1))
 
     """
     Properties
@@ -135,6 +120,10 @@ class Escalation(AbstractGridGame):
     @property
     def MARK(self):
         return self._mark
+
+    @MARK.setter
+    def MARK(self, new_pos):
+        self._mark[0], self._mark[1] = new_pos[0], new_pos[1]
 
     @property
     def STREAK_ACTIVE(self):

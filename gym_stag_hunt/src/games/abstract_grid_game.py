@@ -44,11 +44,11 @@ class AbstractGridGame(ABC):
         if self._obs_type == 'image':
             obs = self.RENDERER.update()  # this will return a numpy pixel array
         else:
-            obs = self._coord_observation()  # this will return a 3d array
+            obs = self._coord_observation()  # this will return the positions of the entities
         return obs
 
     def _coord_observation(self):
-        pass
+        return self.AGENTS
 
     def _move_entity(self, entity_pos, action):
         """

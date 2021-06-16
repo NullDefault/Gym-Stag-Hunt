@@ -14,11 +14,11 @@ ENVS = {
 ENV = 'HUNT'
 
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='image')
-
+    env = ENVS[ENV](obs_type='coords')
     env.reset()
     for i in range(10000):
         obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
+        print(obs)
         sleep(.2)
         if ENV == 'CLASSIC':
             env.render(rewards=rewards)

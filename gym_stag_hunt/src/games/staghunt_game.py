@@ -1,3 +1,4 @@
+from itertools import chain
 from math import hypot
 from random import choice
 from numpy import zeros, flipud, full, rot90
@@ -76,8 +77,11 @@ class StagHunt(AbstractGridGame):
         """
         new_plants = []
         for x in range(self._forage_quantity):
-            new_plants.append(place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
-                                                              used_coordinates=new_plants+self.AGENTS+[self.STAG]))
+            new_plant = zeros(2, dtype=int)
+            new_pos = place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
+                                                      used_coordinates=new_plants+self.AGENTS+[self.STAG])
+            new_plant[0], new_plant[1] = new_pos
+            new_plants.append(new_plant)
         return new_plants
 
     def _respawn_plants(self):
@@ -87,8 +91,11 @@ class StagHunt(AbstractGridGame):
         """
         plants = self.PLANTS
         for eaten_plant in self._tagged_plants:
-            plants[eaten_plant] = place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
-                                                                  used_coordinates=plants+self.AGENTS+[self.STAG])
+            new_plant = zeros(2, dtype=int)
+            new_pos = place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
+                                                      used_coordinates=plants+self.AGENTS+[self.STAG])
+            new_plant[0], new_plant[1] = new_pos
+            plants[eaten_plant] = new_plant
         self._tagged_plants = []
         self.PLANTS = plants
 
@@ -199,26 +206,11 @@ class StagHunt(AbstractGridGame):
 
     def _coord_observation(self):
         """
-        :return: 3d array observation of the grid
-        :format: NxN matrix where each index has 4 entries - 0 or 1 depending on if the given entity is in that cell
-                 So an individual row (here of length 5) looks like:
-                 [..[[A, B,    [A, B,    [A, B,    [A, B,    [A, B,
-                     S, P],   S, P],     S, P],    S, P],    S, P]],..]
-                 Where A is A Agent, S is stag e.t.c
-                 An actually printed matrix row will look like this:
-                 [[0 0 0 0] [0 0 1 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
-                 Which translates to there being a stag in the second column of this row
+        :return: list of all the entity coordinates
         """
-        matrix = full((self._grid_size[0], self._grid_size[1], 4), False, dtype=bool)
-        a, b, stag, plants = self.A_AGENT, self.B_AGENT, self.STAG, self.PLANTS
-
-        matrix[a[0]][a[1]][A_AGENT]           = True
-        matrix[b[0]][b[1]][B_AGENT]           = True
-        matrix[stag[0]][stag[1]][STAG]        = True
-        for plant in plants:
-            matrix[plant[0]][plant[1]][PLANT] = True
-
-        return flipud(rot90(matrix))
+        shipback = [self.A_AGENT, self.B_AGENT, self.STAG]
+        shipback = tuple(shipback + self.PLANTS)
+        return shipback
 
     """
     Movement Methods

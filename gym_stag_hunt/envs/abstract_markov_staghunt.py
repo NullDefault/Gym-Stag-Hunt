@@ -52,18 +52,15 @@ class AbstractMarkovStagHuntEnv(Env, ABC):
         :param mode: rendering mode
         :return:
         """
-        def print_array(obs):
-            if obs is None:
-                obs = self.game.get_observation().astype(int)
-            else:
-                obs = obs.astype(int)
-            print_matrix(obs, self.game_title)
-
         if mode == 'human':
             if self.obs_type == 'image':
                 self.game.RENDERER.render_on_display()
             else:
-                print_array(obs)
+                if self.game.RENDERER:
+                    self.game.RENDERER.update()
+                    self.game.RENDERER.render_on_display()
+                else:
+                    print_matrix(self.game.get_observation(), self.game_title, self.game.GRID_DIMENSIONS)
 
     def close(self):
         """
