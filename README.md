@@ -24,6 +24,9 @@ A 2x2 Stag Hunt game as usually described in game theory literature. If both age
 **mauling_punishment** = int = -5:
 > Reinforcement reward (or, rather, punishment) for getting mauled by a stag. Expected to be negative.
 
+**eps_per_game** = int = 1:
+> Included for convenience, the environment will keep a counter of episodes and once you hit eps_per_game it will set the internal done flag to True and reset the eps counter.
+
 ### Example Render
 
 ```
