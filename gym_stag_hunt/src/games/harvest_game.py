@@ -1,6 +1,6 @@
 from random import uniform
 
-from numpy import flipud, rot90, full
+from numpy import flipud, rot90, full, zeros
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 from gym_stag_hunt.src.utils import overlaps_entity, place_entity_in_unoccupied_cell
@@ -173,7 +173,13 @@ class Harvest(AbstractGridGame):
         :return: tuple of all the entity coordinates
         """
         shipback = (self.A_AGENT, self.B_AGENT)
-        shipback = shipback, tuple(zip(self.PLANTS, self.MATURITY_FLAGS))
+        maturity_flags = self.MATURITY_FLAGS
+        plant_data = []
+        for idx, element in enumerate(self.PLANTS):
+            new_entry = zeros(3, dtype=int)
+            new_entry[0], new_entry[1], new_entry[2] = element[0], element[1], maturity_flags[idx]
+            plant_data.append(new_entry)
+        shipback = shipback, tuple(plant_data)
         return shipback
 
     def reset_entities(self):

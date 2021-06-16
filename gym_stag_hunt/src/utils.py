@@ -29,7 +29,8 @@ def print_matrix(obs, game, grid_size):
         matrix = full((grid_size[0], grid_size[1], 4), False, dtype=bool)
 
     if game == 'hunt':
-        a, b, stag, plants = obs
+        a, b, stag = obs[0], obs[1], obs[2]
+        plants = obs[3:]
         matrix[a[0]][a[1]][A_AGENT]           = True
         matrix[b[0]][b[1]][B_AGENT]           = True
         matrix[stag[0]][stag[1]][STAG]        = True
@@ -37,15 +38,13 @@ def print_matrix(obs, game, grid_size):
             matrix[plant[0]][plant[1]][PLANT] = True
 
     elif game == 'harvest':
-        a, b, plants = obs
+        (a, b), plants = obs
         matrix[a[0]][a[1]][A_AGENT]           = True
         matrix[b[0]][b[1]][B_AGENT]           = True
 
-        plants, maturity_flags = zip(*plants)
-
-        for idx, plant in enumerate(plants):
-            plant_age = M_PLANT if maturity_flags[idx] is True else Y_PLANT
-            matrix[plant[0]][plant[1]][plant_age] = True
+        for element in plants:
+            plant_age = M_PLANT if element[2] else Y_PLANT
+            matrix[element[0]][element[1]][plant_age] = True
 
     elif game == 'escalation':
         a, b, mark = obs
