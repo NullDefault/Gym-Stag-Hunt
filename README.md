@@ -1,6 +1,6 @@
 # Gym Stag Hunt
 
-The repository contains an implementation of a Markov Stag Hunt - a multi agent grid-based game as described in [this paper](https://arxiv.org/abs/1709.02865). The core goal of the project is to offer a robust, efficient, and customizable environment for exploring prosocial behavior in multi agent reinforcement learning. Feedback and requests for features are welcome.
+This project is an implementation of various Stag Hunt games for Open AI Gym. Besides the simple matrix form Stag Hunt, the repository includes 3 different multi-agent grid-based stochastic games as described in this [paper](https://arxiv.org/abs/1709.02865). The core goal of the project is to offer a robust, efficient, and customizable environment for exploring prosocial behavior in multi agent reinforcement learning. Feedback and requests for features are welcome.
 
 ---
 
@@ -8,7 +8,7 @@ The repository contains an implementation of a Markov Stag Hunt - a multi agent 
 
 A 2x2 Stag Hunt game as usually described in game theory literature. If both agents choose to hunt, they each earn the ```stag_reward```. If one agent chooses to hunt, but the other one doesn't, the agent is punished with the ```mauling_punishment```. An agent which chooses to forage, always earns a guaranteed ```forage_reward```.
 
-**Observations**: No observations, although last taken agent actions are returned in place of the observation.  
+**Observations**: Last taken agent actions.
 **Actions**: Cooperate or Defect, encoding is ```COOPERATE=0, DEFECT=1```.
 
 ### Config Parameters
@@ -51,7 +51,7 @@ either moves towards the nearest agent (default) or takes a random move. At the 
 ```forage_reward``` reinforcement. If an agent is on top of a stag, and the other agent is not, the victim agent gets **mauled**, losing ```mauling_punishment``` points. However, if both agents are on top of the stag, they **catch** it, both earning ```stag_reward``` reinforcement points. After a specified amount of
 time steps (```episodes_per_game```), the game is considered done and the environment will reset the position of its entities.
 
-**Observations**: RGB pixel array or coordinate array with boolean tuples signifying entity presence.  
+**Observations**: RGB pixel array or box coordinate array. 
 **Actions**: Left, down, right or up on the grid. Encoding is ```LEFT=0, DOWN=1, RIGHT=2, UP=3```.
 
 #### PyGame Rendering / Image Observation
@@ -71,9 +71,6 @@ time steps (```episodes_per_game```), the game is considered done and the enviro
 ```
 
 ### Config Parameters
-**param** = format = default value:
-> Description
-
 **grid_size** = (N, M) = (5, 5): 
 > Dimensions of the simulation grid. M x N should be equal to at least 3. 
 
@@ -113,7 +110,7 @@ time steps (```episodes_per_game```), the game is considered done and the enviro
 
 Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_size[1]``` grid. ```max_plants``` young plants are then placed in ```max_plants``` random unoccupied cells. In each time step, each agent moves up, down, left or right, each young plant becomes a mature plant with probability ```chance_to_mature```, and each mature plant may die with probability ```chance_to_die```. At the end of each time step, if an agent is on top of a young plant, it harvest it earning the ```young_reward``` for himself. If an agent is on top of a mature plant, then both him and the other agent earn ```mature_reward```.
 
-**Observations**: RGB pixel array or coordinate array with boolean tuples signifying entity presence.  
+**Observations**: RGB pixel array or box coordinate array. 
 **Actions**: Left, down, right or up on the grid. Encoding is ```LEFT=0, DOWN=1, RIGHT=2, UP=3```.
 
 #### PyGame Rendering / Image Observation
@@ -133,9 +130,6 @@ Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_si
 ```
 
 ### Config Parameters
-**param** = format = default value:
-> Description
-
 **grid_size** = (N, M) = (5, 5): 
 > Dimensions of the simulation grid. M x N should be equal to at least 3. 
 
@@ -169,7 +163,7 @@ Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_si
 
 Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_size[1]``` grid. A marker (a sleeping stag) appears on one of the squares. If the agents step on the square together, they both receive +1 reinforcement, at which point the marker moves to an adjacent cell (the stag wakes up and runs away). If the agents step together onto the next square, they receive 1 point. If at any time an agent breaks the streak (eg. by stepping off the path), the other agent receives a penalty of some multiplier (```streak_break_punishment_factor```) times the current length T of the streak and the game ends. The current streak length T is a part of the observation.
 
-**Observations**: RGB pixel array or coordinate array with boolean tuples signifying entity presence.  
+**Observations**: RGB pixel array or box coordinate array. 
 **Actions**: Left, down, right or up on the grid. Encoding is ```LEFT=0, DOWN=1, RIGHT=2, UP=3```.
 
 #### PyGame Rendering / Image Observation
@@ -189,9 +183,6 @@ Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_si
 ```
 
 ### Config Parameters
-**param** = format = default value:
-> Description
-
 **grid_size** = (N, M) = (5, 5): 
 > Dimensions of the simulation grid. M x N should be equal to at least 3. 
 
