@@ -45,25 +45,24 @@ class Escalation(AbstractGridGame):
         a_on_mark = overlaps_entity(self.A_AGENT, self.MARK)
         b_on_mark = overlaps_entity(self.B_AGENT, self.MARK)
 
-        rewards = 0, 0
         punishment = 0 - (self._streak_break_punishment_factor*self._streak)
 
-        if self._streak_active:
-            if a_on_mark:
-                if b_on_mark:
-                    rewards = 1, 1
-                else:
-                    rewards = punishment, 0
+        if a_on_mark:
+            if b_on_mark:
+                rewards = 1, 1
             else:
-                if b_on_mark:
-                    rewards = 0, punishment
-                else:
-                    rewards = 0, 0
+                rewards = punishment, 0
+        else:
+            if b_on_mark:
+                rewards = 0, punishment
+            else:
+                rewards = 0, 0
 
         if 1 in rewards:
             if not self._streak_active:
                 self._streak_active = True
             self._streak = self._streak + 1
+            self._mark = self._random_move(self.MARK)
         else:
             self._streak = 0
             self._streak_active = False
@@ -86,9 +85,6 @@ class Escalation(AbstractGridGame):
         else:
             self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves)
             self.B_AGENT = self._random_move(self.B_AGENT)
-
-        if self._streak_active:
-            self._mark = self._random_move(self.MARK)
 
         # Get Rewards
         iteration_rewards = self._calc_reward()

@@ -1,7 +1,7 @@
 from abc import ABC
-from random import randint
 
 from numpy import zeros
+from numpy.random import choice
 
 """
 Possible Actions
@@ -80,16 +80,27 @@ class AbstractGridGame(ABC):
         :param pos: starting position
         :return: new position
         """
-        if randint(0, 1) == 0:
-            if randint(0, 1) == 0:
-                return self._move_left(pos)
-            else:
-                return self._move_right(pos)
-        else:
-            if randint(0, 1) == 0:
-                return self._move_up(pos)
-            else:
-                return self._move_down(pos)
+        options = [LEFT, RIGHT, UP, DOWN]
+        if pos[0] == 0:
+            options.remove(LEFT)
+        elif pos[0] == self.GRID_W - 1:
+            options.remove(RIGHT)
+
+        if pos[1] == 0:
+            options.remove(UP)
+        elif pos[1] == self.GRID_H - 1:
+            options.remove(DOWN)
+
+        move = choice(options)
+        if move == LEFT:
+            return self._move_left(pos)
+        elif move == RIGHT:
+            return self._move_right(pos)
+        elif move == UP:
+            return self._move_up(pos)
+        elif move == DOWN:
+            return self._move_down(pos)
+
 
     def _move_left(self, pos):
         """

@@ -11,14 +11,23 @@ ENVS = {
     'HARVEST': HarvestEnv,
     'ESCALATION': EscalationEnv
 }
-ENV = 'ESCALATION'
+ENV = 'HUNT'
 
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='image', load_renderer=True)
+    env = ENVS[ENV](obs_type='coord', load_renderer=True)
     env.reset()
     for i in range(10000):
-        obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
-        sleep(.2)
+        actions = [env.action_space.sample(), env.action_space.sample()]
+
+        if ENV != 'CLASSIC':
+            a, b = env.game.AGENTS
+            while (env.game._move_entity(a, actions[0]) == a).all():
+                actions[0] = env.action_space.sample()
+            while (env.game._move_entity(b, actions[1]) == b).all():
+                actions[1] = env.action_space.sample()
+        obs, rewards, done, info = env.step(actions=actions)
+
+        sleep(.6)
         if ENV == 'CLASSIC':
             env.render(rewards=rewards)
         else:

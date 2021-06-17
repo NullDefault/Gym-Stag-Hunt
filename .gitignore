@@ -2,3 +2,5 @@
 .idea
 /logs
 *~
+Pipfile
+Pipfile.lock

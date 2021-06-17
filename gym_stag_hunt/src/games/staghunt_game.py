@@ -168,7 +168,6 @@ class StagHunt(AbstractGridGame):
 
         # Move Entities
         self._move_stag()
-
         if isinstance(agent_moves, list):
             self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves[0])
             if len(agent_moves) > 1:
@@ -245,6 +244,14 @@ class StagHunt(AbstractGridGame):
 
         if not options:
             options = [LEFT, DOWN, RIGHT, UP]
+            if stag_x == 0:
+                options.remove(LEFT)
+            elif stag_x == self.GRID_W - 1:
+                options.remove(RIGHT)
+            if stag_y == self.GRID_H - 1:
+                options.remove(DOWN)
+            elif stag_y == 0:
+                options.remove(UP)
 
         return self._move_entity(self.STAG, choice(options))
 
