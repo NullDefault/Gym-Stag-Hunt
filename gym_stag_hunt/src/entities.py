@@ -17,6 +17,8 @@ sprite_dict = {
     'game_icon': os.path.join(base_path, 'assets/icon.png')
 }
 
+TILE_SIZE = 32
+
 
 def load_img(path):
     """
@@ -28,23 +30,21 @@ def load_img(path):
 
 def get_gui_window_icon():
     """
-    :return: The icon to display in the render windo.
+    :return: The icon to display in the render window.
     """
     return image.load(sprite_dict['game_icon'])
 
 
 class Entity(DirtySprite):
-    def __init__(self, entity_type, cell_sizes, location):
+    def __init__(self, entity_type, location):
         """
         :param entity_type: String specifying which sprite to load from the sprite dictionary (sprite_dict)
-        :param cell_sizes: [W, H] of the grid cells. It's generally expected that W=H, although W!=H is also handled
         :param location: [X, Y] location of the sprite. We calculate the pixel position by multiplying it by cell_sizes
         """
         DirtySprite.__init__(self)
-        self._cell_sizes = cell_sizes  # record cell sizes as an attribute
         self._image = transform.scale(  # Load, scale and record the entity sprite
             load_img(sprite_dict[entity_type]),
-            (int(cell_sizes[0]), int(cell_sizes[1]))
+            (TILE_SIZE, TILE_SIZE)
         )
         self.update_rect(location)  # do the initial rect update
 
@@ -53,9 +53,7 @@ class Entity(DirtySprite):
         :param new_loc: New [X, Y] location of the sprite.
         :return: Nothing, but the sprite updates it's state so it is rendered in the right place next iteration.
         """
-        self.rect = Rect(new_loc[0] * self._cell_sizes[0],
-                         new_loc[1] * self._cell_sizes[1],
-                         self._cell_sizes[0], self._cell_sizes[1])
+        self.rect = Rect(new_loc[0] * TILE_SIZE, new_loc[1] * TILE_SIZE, TILE_SIZE, TILE_SIZE)
 
     @property
     def IMAGE(self):
@@ -63,11 +61,11 @@ class Entity(DirtySprite):
 
 
 class HarvestPlant(Entity):
-    def __init__(self, cell_sizes, location):
-        Entity.__init__(self, cell_sizes=cell_sizes, location=location, entity_type='plant')
+    def __init__(self, location):
+        Entity.__init__(self, location=location, entity_type='plant')
         self._image_young = transform.scale(
             load_img(sprite_dict['plant_young']),
-            (int(cell_sizes[0]), int(cell_sizes[1]))
+            (TILE_SIZE, TILE_SIZE)
         )
 
     @property
@@ -76,11 +74,11 @@ class HarvestPlant(Entity):
 
 
 class Mark(Entity):
-    def __init__(self, cell_sizes, location):
-        Entity.__init__(self, cell_sizes=cell_sizes, location=location, entity_type='mark')
+    def __init__(self, location):
+        Entity.__init__(self, location=location, entity_type='mark')
         self._image_active = transform.scale(
             load_img(sprite_dict['mark_active']),
-            (int(cell_sizes[0]), int(cell_sizes[1]))
+            (TILE_SIZE, TILE_SIZE)
         )
 
     @property

@@ -1,4 +1,4 @@
-from gym.spaces import Discrete, Box, Tuple, MultiDiscrete
+from gym.spaces import Discrete, Box, Tuple
 from numpy import int64
 
 from gym_stag_hunt.envs.abstract_markov_staghunt import AbstractMarkovStagHuntEnv

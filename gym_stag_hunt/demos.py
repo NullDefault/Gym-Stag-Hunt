@@ -11,10 +11,10 @@ ENVS = {
     'HARVEST': HarvestEnv,
     'ESCALATION': EscalationEnv
 }
-ENV = 'HARVEST'
+ENV = 'ESCALATION'
 
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='coords', load_renderer=True)
+    env = ENVS[ENV](obs_type='image', load_renderer=True)
     env.reset()
     for i in range(10000):
         obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])

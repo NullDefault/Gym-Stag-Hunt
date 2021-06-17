@@ -6,10 +6,9 @@ class HuntRenderer(AbstractRenderer):
     def __init__(self, game, window_title, screen_size):
         super(HuntRenderer, self).__init__(game=game, window_title=window_title, screen_size=screen_size)
 
-        cell_sizes = self.CELL_SIZE
         entity_positions = self._game.ENTITY_POSITIONS
 
-        self._stag_sprite = Entity(entity_type='stag', cell_sizes=cell_sizes, location=entity_positions['stag'])
+        self._stag_sprite = Entity(entity_type='stag', location=entity_positions['stag'])
         self._plant_sprites = self._make_plant_entities(entity_positions['plants'])
 
         self._draw_grid()
@@ -24,9 +23,8 @@ class HuntRenderer(AbstractRenderer):
         :return: an array of plant entities ready to be rendered.
         """
         plants = []
-        cell_sizes = self.CELL_SIZE
         for loc in locations:
-            plants.append(Entity(entity_type='plant', cell_sizes=cell_sizes, location=loc))
+            plants.append(Entity(entity_type='plant', location=loc))
         return plants
 
     def _draw_entities(self):
@@ -49,7 +47,6 @@ class HuntRenderer(AbstractRenderer):
         """
         self._a_sprite.update_rect(entity_positions['a_agent'])
         self._b_sprite.update_rect(entity_positions['b_agent'])
-
         self._stag_sprite.update_rect(entity_positions['stag'])
         plants_pos = entity_positions['plants']
         idx = 0

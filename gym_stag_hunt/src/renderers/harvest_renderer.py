@@ -23,9 +23,8 @@ class HarvestRenderer(AbstractRenderer):
         :return: an array of plant entities ready to be rendered.
         """
         plants = []
-        cell_sizes = self.CELL_SIZE
         for loc in locations:
-            plants.append(HarvestPlant(cell_sizes=cell_sizes, location=loc))
+            plants.append(HarvestPlant(location=loc))
         return plants
 
     def _draw_entities(self):

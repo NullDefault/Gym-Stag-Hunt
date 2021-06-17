@@ -6,7 +6,7 @@ class EscalationRenderer(AbstractRenderer):
     def __init__(self, game, window_title, screen_size):
         super(EscalationRenderer, self).__init__(game=game, window_title=window_title, screen_size=screen_size)
 
-        self._mark_sprite = Mark(cell_sizes=self.CELL_SIZE, location=self._game.ENTITY_POSITIONS['mark'])
+        self._mark_sprite = Mark(location=self._game.ENTITY_POSITIONS['mark'])
 
         self.cell_sizes = self.CELL_SIZE
         self._draw_grid()

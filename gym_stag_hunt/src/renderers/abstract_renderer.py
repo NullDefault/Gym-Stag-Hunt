@@ -8,6 +8,7 @@ Drawing Colors
 BACKGROUND_COLOR = (255, 185, 137)
 GRID_LINE_COLOR = (200, 150, 100, 200)
 CLEAR = (0, 0, 0, 0)
+TILE_SIZE = 32
 
 
 class AbstractRenderer:
@@ -22,25 +23,27 @@ class AbstractRenderer:
         pg.display.set_icon(get_gui_window_icon())  # set the window icon
         self._clock = pg.time.Clock()  # create clock object
         self._screen = pg.display.set_mode(screen_size)  # instantiate virtual display
-        self._screen_size = tuple(map(sum, zip(screen_size, (-1, -1))))  # record screen size as an attribute
+        self._screen_size = screen_size  # record screen size as an attribute
         self._game = game  # record game as an attribute
 
+        grid_size = game.GRID_DIMENSIONS
+        game_surface_size = TILE_SIZE * grid_size[0], TILE_SIZE * grid_size[1]
+
         # Create a background
-        self._background = pg.Surface(self._screen.get_size()).convert()  # here we create and fill all the
+        self._background = pg.Surface(game_surface_size).convert()  # here we create and fill all the
         self._background.fill(BACKGROUND_COLOR)                           # render surfaces
         # Create a layer for the grid
-        self._grid_layer = pg.Surface(self._screen.get_size()).convert_alpha()
+        self._grid_layer = pg.Surface(game_surface_size).convert_alpha()
         self._grid_layer.fill(CLEAR)
         # Create a layer for entities
-        self._entity_layer = pg.Surface(self._screen.get_size()).convert_alpha()
+        self._entity_layer = pg.Surface(game_surface_size).convert_alpha()
         self._entity_layer.fill(CLEAR)
 
         # Load sprites for the game objects
-        cell_sizes = self.CELL_SIZE
         entity_positions = self._game.ENTITY_POSITIONS
 
-        self._a_sprite = Entity(entity_type='a_agent', cell_sizes=cell_sizes, location=entity_positions['a_agent'])
-        self._b_sprite = Entity(entity_type='b_agent', cell_sizes=cell_sizes, location=entity_positions['b_agent'])
+        self._a_sprite = Entity(entity_type='a_agent', location=entity_positions['a_agent'])
+        self._b_sprite = Entity(entity_type='b_agent', location=entity_positions['b_agent'])
 
     """
     Controller Methods
@@ -86,21 +89,23 @@ class AbstractRenderer:
         :return: A numpy array corresponding to the pixel state of the display after the render update.
         """
         self._update_rects(self._game.ENTITY_POSITIONS)
+        self._background.fill(BACKGROUND_COLOR)
         self._entity_layer.fill(CLEAR)
         self._draw_entities()
-        # blit the surfaces to the screen surface
-        self._screen.blit(self._background, (0, 0))
-        self._screen.blit(self._grid_layer, (0, 0))
-        self._screen.blit(self._entity_layer, (0, 0))
+        # blit the surfaces to the main surface
+        self._background.blit(self._grid_layer, (0, 0))
+        self._background.blit(self._entity_layer, (0, 0))
 
         if return_observation:
-            return flipud(rot90(pg.surfarray.array3d(pg.display.get_surface())))
+            return flipud(rot90(pg.surfarray.array3d(self._background)))
 
     def render_on_display(self):
         """
-        Actually draws the next frame.
+        Renders the current frame on the virtual display.
         :return:
         """
+        surf = pg.transform.scale(self._background, self._screen_size)
+        self._screen.blit(surf, (0, 0))
         pg.display.flip()
 
     def _draw_grid(self):
@@ -111,11 +116,11 @@ class AbstractRenderer:
 
         # drawing the horizontal lines
         for y in range(self.GRID_H + 1):
-            pg.draw.line(self._grid_layer, GRID_LINE_COLOR, (0, y * self.CELL_H), (self.SCREEN_W, y * self.CELL_H))
+            pg.draw.line(self._grid_layer, GRID_LINE_COLOR, (0, y * TILE_SIZE), (self.SCREEN_W, y * TILE_SIZE))
 
         # drawing the vertical lines
         for x in range(self.GRID_W + 1):
-            pg.draw.line(self._grid_layer, GRID_LINE_COLOR, (x * self.CELL_W, 0), (x * self.CELL_W, self.SCREEN_H))
+            pg.draw.line(self._grid_layer, GRID_LINE_COLOR, (x * TILE_SIZE, 0), (x * TILE_SIZE, self.SCREEN_H))
 
     def _draw_entities(self):
         # Agents
