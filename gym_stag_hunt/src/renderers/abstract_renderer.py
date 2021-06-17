@@ -87,6 +87,7 @@ class AbstractRenderer:
         :param return_observation: boolean saying if we are to (create and) return a numpy pixel array. The operation
                                    is expensive so we don't want to do it needlessly.
         :return: A numpy array corresponding to the pixel state of the display after the render update.
+                 Note: The returned array is smaller than screen_size - the dimensions are 32 * grid_size
         """
         self._update_rects(self._game.ENTITY_POSITIONS)
         self._background.fill(BACKGROUND_COLOR)

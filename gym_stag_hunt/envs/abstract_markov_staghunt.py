@@ -30,12 +30,10 @@ class AbstractMarkovStagHuntEnv(Env, ABC):
         """
         Run one timestep of the environment's dynamics.
         :param actions: ints signifying actions for the agents. You can pass one, in which case the second agent does a
-                        random move, or two, in which case each agents takes the specified action.
+                        random move, or two, in which case each agent takes the specified action.
         :return: observation, rewards, is the game done, additional info
         """
-        obs, reward, done, info = self.game.update(actions)
-
-        return obs, reward, done, info
+        return self.game.update(actions)
 
     def reset(self):
         """

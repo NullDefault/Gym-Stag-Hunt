@@ -69,7 +69,7 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
 
         self.action_space = Discrete(4)  # up, down, left, right on the grid
 
-        if obs_type == 'image':  # Observation is the rgb pixel array
+        if obs_type == 'image':
             self.observation_space = Box(0, 255, shape=(screen_size[0], screen_size[1], 3), dtype=int64)
-        elif obs_type == 'coords':  # Observation is an xy matrix with booleans signifying entities in the cell
+        elif obs_type == 'coords':
             self.observation_space = Box(0, max(grid_size), shape=(3+forage_quantity, 2), dtype=int)
