@@ -11,16 +11,13 @@ ENVS = {
     'HARVEST': HarvestEnv,
     'ESCALATION': EscalationEnv
 }
-ENV = 'HUNT'
+ENV = 'HARVEST'
 
 if __name__ == "__main__":
     env = ENVS[ENV](obs_type='coords', load_renderer=True)
     env.reset()
     for i in range(10000):
         obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
-        print(obs)
-        print(env.observation_space.sample())
-
         sleep(.2)
         if ENV == 'CLASSIC':
             env.render(rewards=rewards)

@@ -58,4 +58,5 @@ class HarvestEnv(AbstractMarkovStagHuntEnv):
         if obs_type == 'image':  # Observation is the rgb pixel array
             self.observation_space = Box(0, 255, shape=(screen_size[0], screen_size[1], 3), dtype=int64)
         elif obs_type == 'coords':  # Observation is an xy matrix with booleans signifying entities in the cell
-            self.observation_space = Tuple((MultiDiscrete([2, 2]), MultiDiscrete([max_plants, 3])))  # TODO: FIX
+            self.observation_space = Tuple((Box(0, max(grid_size), shape=(2, 2), dtype=int),
+                                            Box(0, max(grid_size), shape=(max_plants, 3), dtype=int)))

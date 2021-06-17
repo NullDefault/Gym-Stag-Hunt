@@ -40,6 +40,6 @@ class EscalationEnv(AbstractMarkovStagHuntEnv):
         if obs_type == 'image':  # Observation is the rgb pixel array
             self.observation_space = Box(0, 255, shape=(screen_size[0], screen_size[1], 3), dtype=int64)
         elif obs_type == 'coords':
-            self.observation_space = MultiDiscrete([3, 2])  # TODO: FIX
+            self.observation_space = Box(0, max(grid_size), shape=(3, 2), dtype=int)
 
         self.reward_range = (-Inf, Inf)  # There is technically no limit on how high or low the reinforcement can be

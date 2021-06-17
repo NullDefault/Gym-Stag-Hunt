@@ -209,7 +209,7 @@ class StagHunt(AbstractGridGame):
         :return: list of all the entity coordinates
         """
         shipback = [self.A_AGENT, self.B_AGENT, self.STAG]
-        shipback = tuple(shipback + self.PLANTS)
+        shipback = shipback + self.PLANTS
         return shipback
 
     """

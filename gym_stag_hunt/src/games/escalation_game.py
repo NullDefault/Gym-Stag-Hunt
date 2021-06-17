@@ -103,7 +103,7 @@ class Escalation(AbstractGridGame):
         """
         :return: list of all the entity coordinates
         """
-        return self.A_AGENT, self.B_AGENT, self.MARK
+        return [self.A_AGENT, self.B_AGENT, self.MARK]
 
     def reset_entities(self):
         """
