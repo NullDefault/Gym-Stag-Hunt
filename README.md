@@ -15,14 +15,17 @@ A 2x2 Stag Hunt game as usually described in game theory literature. If both age
 **param** = format = default value:
 > Description
 
-**stag_reward** = int = 5:
-> Reinforcement reward for when agents catch the stag by occupying the same cell as it at the same time. Expected to be positive.
+**cooperation_reward** = int = 5:
+> Reinforcement reward for when both agents choose to cooperate.
 
-**forage_reward** = int = 1:
-> Reinforcement reward for harvesting a plant. Expected to be positive.
+**defect_alone_reward** = int = 1:
+> Reinforcement reward for defecting when the other agent is choosing to cooperate.
 
-**mauling_punishment** = int = -5:
-> Reinforcement reward (or, rather, punishment) for getting mauled by a stag. Expected to be negative.
+>**defect_together_reward** = int = 1:
+> Reinforcement reward for defecting when the other agent is choosing to also defect.
+
+**failed_cooperation_punishment** = int = -5:
+> Reinforcement reward (or, rather, punishment) for choosing to cooperate when the other agent chooses not to.
 
 **eps_per_game** = int = 1:
 > Included for convenience, the environment will keep a counter of episodes and once you hit eps_per_game it will set the internal done flag to True and reset the eps counter.

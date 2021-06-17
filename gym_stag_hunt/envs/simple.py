@@ -10,29 +10,32 @@ DEFECT = 1
 
 class SimpleEnv(Env):
     def __init__(self,
-                 stag_reward=5,
-                 forage_reward=1,
-                 mauling_punishment=-5,
+                 cooperation_reward=5,
+                 defect_alone_reward=1,
+                 defect_together_reward=1,
+                 failed_cooperation_punishment=-5,
                  eps_per_game=1
                  ):
         """
-        :param stag_reward: How much reinforcement the agents get for catching the stag
-        :param forage_reward: How much reinforcement the agents get for harvesting a plant
-        :param mauling_punishment: How much reinforcement the agents get for trying to catch a stag alone (MUST be neg.)
+        :param cooperation_reward: How much reinforcement the agents get for catching the stag
+        :param defect_alone_reward: How much reinforcement an agent gets for defecting if the other one doesn't
+        :param defect_together_reward: How much reinforcement an agent gets for defecting if the other one does also
+        :param failed_cooperation_punishment: How much reinforcement the agents get for trying to catch a stag alone
         :param eps_per_game: How many games happen before the internal done flag is set to True. Only included for
                              the sake of convenience.
         """
 
-        if not (stag_reward > forage_reward >= 0 > mauling_punishment):
+        if not (cooperation_reward > defect_alone_reward >= defect_together_reward > failed_cooperation_punishment):
             raise AttributeError('The game does not qualify as a Stag Hunt, please change parameters so that '
-                                 'stag_reward > forage_reward >= 0 > mauling_punishment')
+                                 'stag_reward > forage_reward_single >= forage_reward_both > mauling_punishment')
 
         super(SimpleEnv, self).__init__()
 
         # Reinforcement Variables
-        self.stag_reward = stag_reward
-        self.forage_reward = forage_reward
-        self.mauling_punishment = mauling_punishment
+        self.cooperation_reward = cooperation_reward
+        self.defect_alone_reward = defect_alone_reward
+        self.defect_together_reward = defect_together_reward
+        self.failed_cooperation_punishment = failed_cooperation_punishment
 
         # State Variables
         self.done = False
@@ -43,7 +46,7 @@ class SimpleEnv(Env):
         # Environment Config
         self.action_space = Discrete(2)             # cooperate or defect
         self.observation_space = Discrete(2)        # last agent actions
-        self.reward_range = (mauling_punishment, stag_reward)
+        self.reward_range = (failed_cooperation_punishment, cooperation_reward)
 
     def step(self, actions):
         """
@@ -72,11 +75,11 @@ class SimpleEnv(Env):
         b_cooperated = b_action == COOPERATE
 
         if a_action == COOPERATE:
-            reward = (self.stag_reward, self.stag_reward) if b_cooperated \
-                else (self.mauling_punishment, self.forage_reward)
+            reward = (self.cooperation_reward, self.cooperation_reward) if b_cooperated \
+                else (self.failed_cooperation_punishment, self.defect_alone_reward)
         else:
-            reward = (self.forage_reward, self.mauling_punishment) if b_cooperated \
-                else (self.forage_reward, self.forage_reward)
+            reward = (self.defect_alone_reward, self.failed_cooperation_punishment) if b_cooperated \
+                else (self.defect_together_reward, self.defect_together_reward)
 
         obs = (a_action, b_action)
 
@@ -102,15 +105,15 @@ class SimpleEnv(Env):
             bot_left  = '  '
             bot_right = '  '
 
-            if rewards == (self.stag_reward, self.stag_reward):
+            if rewards == (self.cooperation_reward, self.cooperation_reward):
                 top_left = 'AB'
-            elif rewards == (self.forage_reward, self.mauling_punishment):
+            elif rewards == (self.defect_alone_reward, self.failed_cooperation_punishment):
                 bot_left = 'A '
                 top_right = ' B'
-            elif rewards == (self.mauling_punishment, self.forage_reward):
+            elif rewards == (self.failed_cooperation_punishment, self.defect_alone_reward):
                 top_left = 'A '
                 top_right = ' B'
-            elif rewards == (self.forage_reward, self.forage_reward):
+            elif rewards == (self.defect_together_reward, self.defect_together_reward):
                 bot_right = 'AB'
 
             stdout.write('\n\n\n')
