@@ -47,16 +47,14 @@ class Escalation(AbstractGridGame):
 
         punishment = 0 - (self._streak_break_punishment_factor*self._streak)
 
-        if a_on_mark:
-            if b_on_mark:
-                rewards = 1, 1
-            else:
-                rewards = punishment, 0
+        if a_on_mark and b_on_mark:
+            rewards = 1, 1
+        elif a_on_mark:
+            rewards = punishment, 0
+        elif b_on_mark:
+            rewards = 0, punishment
         else:
-            if b_on_mark:
-                rewards = 0, punishment
-            else:
-                rewards = 0, 0
+            rewards = 0, 0
 
         if 1 in rewards:
             if not self._streak_active:
@@ -76,21 +74,9 @@ class Escalation(AbstractGridGame):
                             a random action.
         :return: observation, rewards, is the game done
         """
-        if isinstance(agent_moves, list):
-            self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves[0])
-            if len(agent_moves) > 1:
-                self.B_AGENT = self._move_entity(self.B_AGENT, agent_moves[1])
-            else:
-                self.B_AGENT = self._random_move(self.B_AGENT)
-        else:
-            self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves)
-            self.B_AGENT = self._random_move(self.B_AGENT)
-
-        # Get Rewards
+        self._move_agents(agent_moves=agent_moves)
         iteration_rewards = self._calc_reward()
-
         obs = self.get_observation()
-
         info = {}
 
         return obs, iteration_rewards, False, info

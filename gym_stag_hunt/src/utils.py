@@ -2,7 +2,7 @@ from itertools import product
 from random import choice
 from sys import stdout
 
-from numpy import all, full
+from numpy import all, full, zeros, uint8
 
 symbol_dict = {
     'hunt': ('S', 'P'),
@@ -97,3 +97,24 @@ def place_entity_in_unoccupied_cell(used_coordinates, grid_dims):
                 all_coords.remove(test)
 
     return choice(all_coords)
+
+
+def spawn_plants(grid_dims, how_many, used_coordinates):
+    new_plants = []
+    for x in range(how_many):
+        new_plant = zeros(2, dtype=uint8)
+        new_pos = place_entity_in_unoccupied_cell(grid_dims=grid_dims,
+                                                  used_coordinates=new_plants+used_coordinates)
+        new_plant[0], new_plant[1] = new_pos
+        new_plants.append(new_plant)
+    return new_plants
+
+
+def respawn_plants(plants, tagged_plants, grid_dims, used_coordinates):
+    for tagged_plant in tagged_plants:
+        new_plant = zeros(2, dtype=uint8)
+        new_pos = place_entity_in_unoccupied_cell(grid_dims=grid_dims,
+                                                  used_coordinates=plants+used_coordinates)
+        new_plant[0], new_plant[1] = new_pos
+        plants[tagged_plant] = new_plant
+    return plants

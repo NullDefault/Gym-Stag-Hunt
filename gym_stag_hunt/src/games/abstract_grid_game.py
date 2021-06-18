@@ -3,13 +3,11 @@ from abc import ABC
 from numpy import zeros, uint8
 from numpy.random import choice
 
-"""
-Possible Actions
-"""
-LEFT = 0
-DOWN = 1
+# Possible Moves
+LEFT  = 0
+DOWN  = 1
 RIGHT = 2
-UP = 3
+UP    = 3
 
 
 class AbstractGridGame(ABC):
@@ -30,7 +28,7 @@ class AbstractGridGame(ABC):
         self._obs_type = obs_type  # record type of observation as attribute
         self._grid_size = grid_size  # record grid dimensions as attribute
 
-        self._a_pos = zeros(2, dtype=uint8)  # create empty tuples for all the entity positions
+        self._a_pos = zeros(2, dtype=uint8)  # create empty coordinate tuples for the agents
         self._b_pos = zeros(2, dtype=uint8)
 
     """
@@ -41,14 +39,25 @@ class AbstractGridGame(ABC):
         """
         :return: observation of the current game state
         """
-        if self._obs_type == 'image':
-            obs = self.RENDERER.update()  # this will return a numpy pixel array
-        else:
-            obs = self._coord_observation()  # this will return the positions of the entities
-        return obs
+        return self.RENDERER.update() if self._obs_type == 'image' else self._coord_observation()
 
     def _coord_observation(self):
         return self.AGENTS
+
+    """
+    Movement Methods
+    """
+
+    def _move_dispatcher(self):
+        """
+        Helper function for streamlining entity movement.
+        """
+        return {
+            LEFT: self._move_left,
+            DOWN: self._move_down,
+            RIGHT: self._move_right,
+            UP: self._move_up
+        }
 
     def _move_entity(self, entity_pos, action):
         """
@@ -57,21 +66,25 @@ class AbstractGridGame(ABC):
         :param action: which direction to move
         :return: new position tuple
         """
-        dispatcher = {
-            LEFT: self._move_left,
-            DOWN: self._move_down,
-            RIGHT: self._move_right,
-            UP: self._move_up
-        }
-        return dispatcher[action](entity_pos)
+        return self._move_dispatcher()[action](entity_pos)
+
+    def _move_agents(self, agent_moves):
+        if isinstance(agent_moves, list):
+            self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves[0])
+            if len(agent_moves) > 1:
+                self.B_AGENT = self._move_entity(self.B_AGENT, agent_moves[1])
+            else:
+                self.B_AGENT = self._random_move(self.B_AGENT)
+        else:
+            self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves)
+            self.B_AGENT = self._random_move(self.B_AGENT)
 
     def _reset_agents(self):
         """
         Place agents in the top left and top right corners.
         :return:
         """
-        self.A_AGENT = [0, 0]
-        self.B_AGENT = [self.GRID_W - 1, 0]
+        self.A_AGENT, self.B_AGENT = [0, 0], [self.GRID_W - 1, 0]
 
     def _random_move(self, pos):
         """
@@ -91,14 +104,7 @@ class AbstractGridGame(ABC):
             options.remove(DOWN)
 
         move = choice(options)
-        if move == LEFT:
-            return self._move_left(pos)
-        elif move == RIGHT:
-            return self._move_right(pos)
-        elif move == UP:
-            return self._move_up(pos)
-        elif move == DOWN:
-            return self._move_down(pos)
+        return self._move_dispatcher()[move](pos)
 
     def _move_left(self, pos):
         """

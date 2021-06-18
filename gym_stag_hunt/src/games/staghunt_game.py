@@ -5,11 +5,9 @@ from numpy import zeros, uint8
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 
 from gym_stag_hunt.src.games.abstract_grid_game import UP, DOWN, LEFT, RIGHT
-from gym_stag_hunt.src.utils import overlaps_entity, place_entity_in_unoccupied_cell
+from gym_stag_hunt.src.utils import overlaps_entity, place_entity_in_unoccupied_cell, spawn_plants, respawn_plants
 
-"""
-Entity Keys
-"""
+# Entity Keys
 A_AGENT = 0
 B_AGENT = 1
 STAG    = 2
@@ -64,39 +62,6 @@ class StagHunt(AbstractGridGame):
             # we don't want to import pygame if we aren't going to use it, so that's why this import is here
             from gym_stag_hunt.src.renderers.hunt_renderer import HuntRenderer
             self._renderer = HuntRenderer(game=self, window_title=window_title, screen_size=screen_size)
-
-    """
-    Plant Spawning Methods
-    """
-
-    def _spawn_plants(self):
-        """
-        Generate new coordinates for all the plants.
-        :return:
-        """
-        new_plants = []
-        for x in range(self._forage_quantity):
-            new_plant = zeros(2, dtype=uint8)
-            new_pos = place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
-                                                      used_coordinates=new_plants+self.AGENTS+[self.STAG])
-            new_plant[0], new_plant[1] = new_pos
-            new_plants.append(new_plant)
-        return new_plants
-
-    def _respawn_plants(self):
-        """
-        Checks which plants are due for re-spawning and respawns them.
-        :return:
-        """
-        plants = self.PLANTS
-        for eaten_plant in self._tagged_plants:
-            new_plant = zeros(2, dtype=uint8)
-            new_pos = place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
-                                                      used_coordinates=plants+self.AGENTS+[self.STAG])
-            new_plant[0], new_plant[1] = new_pos
-            plants[eaten_plant] = new_plant
-        self._tagged_plants = []
-        self.PLANTS = plants
 
     """
     Collision Logic
@@ -167,15 +132,7 @@ class StagHunt(AbstractGridGame):
 
         # Move Entities
         self._move_stag()
-        if isinstance(agent_moves, list):
-            self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves[0])
-            if len(agent_moves) > 1:
-                self.B_AGENT = self._move_entity(self.B_AGENT, agent_moves[1])
-            else:
-                self.B_AGENT = self._random_move(self.B_AGENT)
-        else:
-            self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves)
-            self.B_AGENT = self._random_move(self.B_AGENT)
+        self._move_agents(agent_moves=agent_moves)
 
         # Get Rewards
         iteration_rewards = self._calc_reward()
@@ -188,7 +145,10 @@ class StagHunt(AbstractGridGame):
             self.STAG = place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
                                                         used_coordinates=self.PLANTS+self.AGENTS+[self.STAG])
         elif self._forage_reward in iteration_rewards:
-            self._respawn_plants()
+            new_plants = respawn_plants(plants=self.PLANTS, tagged_plants=self._tagged_plants,
+                                        grid_dims=self.GRID_DIMENSIONS, used_coordinates=self.AGENTS+[self.STAG])
+            self._tagged_plants = []
+            self.PLANTS = new_plants
 
         game_done = self._eps_to_go == 0
 
@@ -280,7 +240,8 @@ class StagHunt(AbstractGridGame):
         """
         self._reset_agents()
         self.STAG = [self.GRID_W // 2, self.GRID_H // 2]
-        self.PLANTS = self._spawn_plants()
+        self.PLANTS = spawn_plants(grid_dims=self.GRID_DIMENSIONS, how_many=self._forage_quantity,
+                                   used_coordinates=self.AGENTS+[self.STAG])
 
     """
     Properties

@@ -11,7 +11,7 @@ ENVS = {
     'HARVEST': HarvestEnv,
     'ESCALATION': EscalationEnv
 }
-ENV = 'ESCALATION'
+ENV = 'HUNT'
 
 if __name__ == "__main__":
     env = ENVS[ENV](obs_type='image', load_renderer=True)
