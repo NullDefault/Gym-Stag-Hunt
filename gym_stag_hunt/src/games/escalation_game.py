@@ -1,6 +1,6 @@
 from random import randint
 
-from numpy import zeros
+from numpy import zeros, uint8
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 from gym_stag_hunt.src.utils import overlaps_entity
@@ -26,7 +26,7 @@ class Escalation(AbstractGridGame):
 
         self._streak_break_punishment_factor = streak_break_punishment_factor
 
-        self._mark = zeros(2, dtype=int)
+        self._mark = zeros(2, dtype=uint8)
         self._streak_active = False
         self._streak = 0
         self.reset_entities()

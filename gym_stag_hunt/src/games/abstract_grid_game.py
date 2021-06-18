@@ -1,6 +1,6 @@
 from abc import ABC
 
-from numpy import zeros
+from numpy import zeros, uint8
 from numpy.random import choice
 
 """
@@ -30,8 +30,8 @@ class AbstractGridGame(ABC):
         self._obs_type = obs_type  # record type of observation as attribute
         self._grid_size = grid_size  # record grid dimensions as attribute
 
-        self._a_pos = zeros(2, dtype=int)  # create empty tuples for all the entity positions
-        self._b_pos = zeros(2, dtype=int)
+        self._a_pos = zeros(2, dtype=uint8)  # create empty tuples for all the entity positions
+        self._b_pos = zeros(2, dtype=uint8)
 
     """
     Observations
@@ -99,7 +99,6 @@ class AbstractGridGame(ABC):
             return self._move_up(pos)
         elif move == DOWN:
             return self._move_down(pos)
-
 
     def _move_left(self, pos):
         """

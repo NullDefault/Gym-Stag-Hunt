@@ -1,7 +1,6 @@
-from itertools import chain
 from math import hypot
 from random import choice
-from numpy import zeros, flipud, full, rot90
+from numpy import zeros, uint8
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 
@@ -56,7 +55,7 @@ class StagHunt(AbstractGridGame):
         self._eps_per_game  = episodes_per_game             # record episodes per game as attribute
 
         # Entity Positions
-        self._stag_pos   = zeros(2, dtype=int)
+        self._stag_pos   = zeros(2, dtype=uint8)
         self._plants_pos = []
         self.reset_entities()                               # place the entities on the grid
 
@@ -77,7 +76,7 @@ class StagHunt(AbstractGridGame):
         """
         new_plants = []
         for x in range(self._forage_quantity):
-            new_plant = zeros(2, dtype=int)
+            new_plant = zeros(2, dtype=uint8)
             new_pos = place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
                                                       used_coordinates=new_plants+self.AGENTS+[self.STAG])
             new_plant[0], new_plant[1] = new_pos
@@ -91,7 +90,7 @@ class StagHunt(AbstractGridGame):
         """
         plants = self.PLANTS
         for eaten_plant in self._tagged_plants:
-            new_plant = zeros(2, dtype=int)
+            new_plant = zeros(2, dtype=uint8)
             new_pos = place_entity_in_unoccupied_cell(grid_dims=self.GRID_DIMENSIONS,
                                                       used_coordinates=plants+self.AGENTS+[self.STAG])
             new_plant[0], new_plant[1] = new_pos
