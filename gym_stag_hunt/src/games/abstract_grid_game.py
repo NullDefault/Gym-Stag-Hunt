@@ -57,14 +57,13 @@ class AbstractGridGame(ABC):
         :param action: which direction to move
         :return: new position tuple
         """
-        if action == LEFT:
-            return self._move_left(entity_pos)
-        elif action == DOWN:
-            return self._move_down(entity_pos)
-        elif action == RIGHT:
-            return self._move_right(entity_pos)
-        elif action == UP:
-            return self._move_up(entity_pos)
+        dispatcher = {
+            LEFT: self._move_left,
+            DOWN: self._move_down,
+            RIGHT: self._move_right,
+            UP: self._move_up
+        }
+        return dispatcher[action](entity_pos)
 
     def _reset_agents(self):
         """
