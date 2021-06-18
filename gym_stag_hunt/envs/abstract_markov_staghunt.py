@@ -6,7 +6,10 @@ from gym_stag_hunt.src.utils import print_matrix
 
 
 class AbstractMarkovStagHuntEnv(Env, ABC):
-    metadata = {'render.modes': ['human']}
+    metadata = {
+        'render.modes': ['human'],
+        'obs.types': ['image', 'coords']
+    }
 
     def __init__(self,
                  grid_size=(5, 5),
@@ -19,6 +22,10 @@ class AbstractMarkovStagHuntEnv(Env, ABC):
         total_cells = grid_size[0] * grid_size[1]
         if total_cells < 3:
             raise AttributeError('Grid is too small. Please specify a larger grid size.')
+        if obs_type not in self.metadata['obs.types']:
+            raise AttributeError('Invalid observation type provided. Please specify "image" or "coords"')
+        if grid_size[0] >= 255 or grid_size[1] >= 255:
+            raise AttributeError('Grid is too large. Please specify a smaller grid size.')
 
         super(AbstractMarkovStagHuntEnv, self).__init__()
 

@@ -1,7 +1,8 @@
 from gym.spaces import Discrete, Box
-from numpy import int64, Inf
+from numpy import Inf, uint8
 
 from gym_stag_hunt.envs.abstract_markov_staghunt import AbstractMarkovStagHuntEnv
+from gym_stag_hunt.src.entities import TILE_SIZE
 from gym_stag_hunt.src.games.escalation_game import Escalation
 
 
@@ -38,8 +39,8 @@ class EscalationEnv(AbstractMarkovStagHuntEnv):
         # Environment Config
         self.action_space = Discrete(4)  # up, down, left, right on the grid
         if obs_type == 'image':  # Observation is the rgb pixel array
-            self.observation_space = Box(0, 255, shape=(screen_size[0], screen_size[1], 3), dtype=int64)
+            self.observation_space = Box(0, 255, shape=(grid_size[0]*TILE_SIZE, grid_size[1]*TILE_SIZE, 3), dtype=uint8)
         elif obs_type == 'coords':
-            self.observation_space = Box(0, max(grid_size), shape=(3, 2), dtype=int)
+            self.observation_space = Box(0, max(grid_size), shape=(3, 2), dtype=uint8)
 
         self.reward_range = (-Inf, Inf)  # There is technically no limit on how high or low the reinforcement can be
