@@ -7,7 +7,7 @@ from gym_stag_hunt.src.utils import print_matrix
 
 class AbstractMarkovStagHuntEnv(Env, ABC):
     metadata = {
-        'render.modes': ['human'],
+        'render.modes': ['human', 'array'],
         'obs.types': ['image', 'coords']
     }
 
@@ -72,6 +72,8 @@ class AbstractMarkovStagHuntEnv(Env, ABC):
                         print_matrix(obs, self.game_title, self.game.GRID_DIMENSIONS)
                     else:
                         print_matrix(self.game.get_observation(), self.game_title, self.game.GRID_DIMENSIONS)
+        elif mode == 'array':
+            print_matrix(self.game._coord_observation(), self.game_title, self.game.GRID_DIMENSIONS)
 
     def close(self):
         """

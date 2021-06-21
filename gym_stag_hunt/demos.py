@@ -24,7 +24,7 @@ def print_ep(obs, reward, done, info):
 
 
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='coords')
+    env = ENVS[ENV](obs_type='image')
     obs = env.reset()
     for i in range(10000):
         actions = [env.action_space.sample(), env.action_space.sample()]
@@ -36,11 +36,10 @@ if __name__ == "__main__":
                 actions[1] = env.action_space.sample()
         obs, rewards, done, info = env.step(actions=actions)
         print_ep(obs, rewards, done, info)
-        print(env.observation_space.sample())
         sleep(.6)
         if ENV == 'CLASSIC':
             env.render(rewards=rewards)
         else:
-            env.render()
+            env.render(mode='human')
     env.close()
     quit()

@@ -3,7 +3,7 @@ from gym_stag_hunt.src.entities import Entity, get_gui_window_icon
 from numpy import rot90, flipud
 
 """
-Drawing Colors
+Constants
 """
 BACKGROUND_COLOR = (255, 185, 137)
 GRID_LINE_COLOR = (200, 150, 100, 200)
@@ -18,20 +18,21 @@ class AbstractRenderer:
         :param window_title: What we set as the window caption
         :param screen_size: The size of the virtual display on which we will be rendering stuff on
         """
-        pg.init()  # initialize pygame
-        pg.display.set_caption(window_title)  # set the window caption
+        pg.init()                                   # initialize pygame
+        pg.display.set_caption(window_title)        # set the window caption
         pg.display.set_icon(get_gui_window_icon())  # set the window icon
-        self._clock = pg.time.Clock()  # create clock object
-        self._screen = pg.display.set_mode(screen_size)  # instantiate virtual display
-        self._screen_size = screen_size  # record screen size as an attribute
-        self._game = game  # record game as an attribute
+        pg.display.set_mode((1, 1), pg.NOFRAME)     # set video mode without creating display
+        self._clock = pg.time.Clock()               # create clock object
+        self._screen = None                         # temp screen attribute
+        self._screen_size = screen_size             # record screen size as an attribute
+        self._game = game                           # record game as an attribute
 
         grid_size = game.GRID_DIMENSIONS
         game_surface_size = TILE_SIZE * grid_size[0], TILE_SIZE * grid_size[1]
 
         # Create a background
-        self._background = pg.Surface(game_surface_size).convert()  # here we create and fill all the
-        self._background.fill(BACKGROUND_COLOR)                           # render surfaces
+        self._background = pg.Surface(game_surface_size).convert()  # here we create and fill all the surfaces
+        self._background.fill(BACKGROUND_COLOR)
         # Create a layer for the grid
         self._grid_layer = pg.Surface(game_surface_size).convert_alpha()
         self._grid_layer.fill(CLEAR)
@@ -48,6 +49,9 @@ class AbstractRenderer:
     """
     Controller Methods
     """
+
+    def _init_display(self):
+        self._screen = pg.display.set_mode(self._screen_size)  # instantiate virtual display
 
     def update(self):
         """
@@ -106,6 +110,8 @@ class AbstractRenderer:
         :return:
         """
         surf = pg.transform.scale(self._background, self._screen_size)
+        if self._screen is None:
+            self._init_display()
         self._screen.blit(surf, (0, 0))
         pg.display.flip()
 
