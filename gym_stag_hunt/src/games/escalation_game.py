@@ -61,7 +61,7 @@ class Escalation(AbstractGridGame):
             if not self._streak_active:
                 self._streak_active = True
             self._streak = self._streak + 1
-            self._mark = self._random_move(self.MARK)
+            self.MARK = self._random_move(self.MARK)
         else:
             self._streak = 0
             self._streak_active = False
@@ -97,7 +97,7 @@ class Escalation(AbstractGridGame):
         :return:
         """
         self._reset_agents()
-        self.MARK = (randint(0, self.GRID_W - 1), randint(0, self.GRID_H - 1))
+        self.MARK = [randint(0, self.GRID_W - 1), randint(0, self.GRID_H - 1)]
 
     """
     Properties
