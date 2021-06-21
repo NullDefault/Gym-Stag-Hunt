@@ -14,11 +14,13 @@ class AbstractMarkovStagHuntEnv(Env, ABC):
     def __init__(self,
                  grid_size=(5, 5),
                  obs_type='image',
+                 enable_multiagent=False
                  ):
         """
         :param grid_size: A (W, H) tuple corresponding to the grid dimensions. Although W=H is expected, W!=H works also
         :param obs_type: Can be 'image' for pixel-array based observations, or 'coords' for just the entity coordinates
         """
+
         total_cells = grid_size[0] * grid_size[1]
         if total_cells < 3:
             raise AttributeError('Grid is too small. Please specify a larger grid size.')
@@ -31,6 +33,7 @@ class AbstractMarkovStagHuntEnv(Env, ABC):
 
         self.obs_type = obs_type
         self.done = False
+        self.enable_multiagent = enable_multiagent
         self.seed()
 
     def step(self, actions):

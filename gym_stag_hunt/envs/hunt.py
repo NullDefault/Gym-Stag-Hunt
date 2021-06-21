@@ -11,6 +11,7 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
                  grid_size=(5, 5),
                  screen_size=(600, 600),
                  obs_type='image',
+                 enable_multiagent=False,
                  load_renderer=False,
                  episodes_per_game=1000,
                  stag_follows=True,
@@ -46,7 +47,7 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
         if total_cells < 3:
             raise AttributeError('Grid is too small. Please specify a larger grid size.')
 
-        super(HuntEnv, self).__init__(grid_size=grid_size, obs_type=obs_type)
+        super(HuntEnv, self).__init__(grid_size=grid_size, obs_type=obs_type, enable_multiagent=enable_multiagent)
 
         self.game_title = 'hunt'
         self.stag_reward = stag_reward
@@ -59,6 +60,7 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
                              grid_size=grid_size,
                              screen_size=screen_size,
                              obs_type=obs_type,
+                             enable_multiagent=enable_multiagent,
                              load_renderer=load_renderer,
                              episodes_per_game=episodes_per_game,
                              stag_reward=stag_reward,
@@ -73,4 +75,4 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
         if obs_type == 'image':
             self.observation_space = Box(0, 255, shape=(grid_size[0]*TILE_SIZE, grid_size[1]*TILE_SIZE, 3), dtype=uint8)
         elif obs_type == 'coords':
-            self.observation_space = Box(0, max(grid_size), shape=(3+forage_quantity, 2), dtype=uint8)
+            self.observation_space = Box(0, max(grid_size), shape=(6+forage_quantity*2,), dtype=uint8)

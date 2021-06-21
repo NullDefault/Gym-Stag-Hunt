@@ -14,11 +14,11 @@ ENVS = {
 ENV = 'HUNT'
 
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='image', load_renderer=True)
-    env.reset()
+    env = ENVS[ENV](obs_type='coords')
+    obs = env.reset()
     for i in range(10000):
         actions = [env.action_space.sample(), env.action_space.sample()]
-
+        print(obs)
         if ENV != 'CLASSIC':
             a, b = env.game.AGENTS
             while (env.game._move_entity(a, actions[0]) == a).all():
@@ -26,6 +26,7 @@ if __name__ == "__main__":
             while (env.game._move_entity(b, actions[1]) == b).all():
                 actions[1] = env.action_space.sample()
         obs, rewards, done, info = env.step(actions=actions)
+        print(rewards)
 
         sleep(.6)
         if ENV == 'CLASSIC':

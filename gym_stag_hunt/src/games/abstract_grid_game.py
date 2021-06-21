@@ -1,6 +1,6 @@
 from abc import ABC
 
-from numpy import zeros, uint8
+from numpy import zeros, uint8, array
 from numpy.random import choice
 
 # Possible Moves
@@ -14,11 +14,13 @@ class AbstractGridGame(ABC):
     def __init__(self,
                  grid_size,
                  screen_size,
-                 obs_type):
+                 obs_type,
+                 enable_multiagent):
         """
         :param grid_size: A (W, H) tuple corresponding to the grid dimensions. Although W=H is expected, W!=H works also
         :param screen_size: A (W, H) tuple corresponding to the pixel dimensions of the game window
         :param obs_type: Can be 'image' for pixel-array based observations, or 'coords' for just the entity coordinates
+        :param enable_multiagent: Boolean signifying if the env will be used to train multiple agents or one.
         """
         if screen_size[0] * screen_size[1] == 0:
             raise AttributeError("Screen size is too small. Please provide larger screen size.")
@@ -27,6 +29,7 @@ class AbstractGridGame(ABC):
         self._renderer = None  # placeholder renderer
         self._obs_type = obs_type  # record type of observation as attribute
         self._grid_size = grid_size  # record grid dimensions as attribute
+        self._enable_multiagent = enable_multiagent
 
         self._a_pos = zeros(2, dtype=uint8)  # create empty coordinate tuples for the agents
         self._b_pos = zeros(2, dtype=uint8)
@@ -42,7 +45,7 @@ class AbstractGridGame(ABC):
         return self.RENDERER.update() if self._obs_type == 'image' else self._coord_observation()
 
     def _coord_observation(self):
-        return self.AGENTS
+        return array(self.AGENTS)
 
     """
     Movement Methods

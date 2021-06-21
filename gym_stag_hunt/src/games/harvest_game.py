@@ -1,9 +1,9 @@
 from random import uniform
 
-from numpy import zeros, uint8
+from numpy import zeros, uint8, array
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
-from gym_stag_hunt.src.utils import overlaps_entity, place_entity_in_unoccupied_cell, spawn_plants, respawn_plants
+from gym_stag_hunt.src.utils import overlaps_entity, spawn_plants, respawn_plants
 
 # Entity Keys
 A_AGENT = 0
@@ -20,7 +20,7 @@ class Harvest(AbstractGridGame):
                  young_reward,
                  mature_reward,
                  # Super Class Params
-                 window_title, grid_size, screen_size, obs_type, load_renderer):
+                 window_title, grid_size, screen_size, obs_type, load_renderer, enable_multiagent):
         """
         :param max_plants: What is the maximum number of plants that can be on the board.
         :param chance_to_mature: What chance does a young plant have to mature each time step.
@@ -29,7 +29,8 @@ class Harvest(AbstractGridGame):
         :param mature_reward: Reward for harvesting a mature plant (awarded to both agents)
         """
 
-        super(Harvest, self).__init__(grid_size=grid_size, screen_size=screen_size, obs_type=obs_type)
+        super(Harvest, self).__init__(grid_size=grid_size, screen_size=screen_size, obs_type=obs_type,
+                                      enable_multiagent=enable_multiagent)
 
         # Game Config
         self._max_plants = max_plants
@@ -99,7 +100,10 @@ class Harvest(AbstractGridGame):
             else:
                 b_reward += self._young_reward
 
-        return a_reward, b_reward
+        if self._enable_multiagent:
+            return float(a_reward), float(b_reward)
+        else:
+            return float(a_reward)
 
     def update(self, agent_moves):
         """
@@ -124,8 +128,8 @@ class Harvest(AbstractGridGame):
         iteration_rewards = self._calc_reward()
 
         if len(self._tagged_plants) > 0:
-            self._plants = respawn_plants(plants=self.PLANTS, tagged_plants=self._tagged_plants, grid_dims=self.GRID_DIMENSIONS,
-                                          used_coordinates=self.AGENTS)
+            self._plants = respawn_plants(plants=self.PLANTS, tagged_plants=self._tagged_plants,
+                                          grid_dims=self.GRID_DIMENSIONS, used_coordinates=self.AGENTS)
             self._tagged_plants = []
 
         obs = self.get_observation()
@@ -146,7 +150,7 @@ class Harvest(AbstractGridGame):
             new_entry[0], new_entry[1], new_entry[2] = element[0], element[1], maturity_flags[idx]
             plant_data.append(new_entry)
         shipback = shipback, plant_data
-        return shipback
+        return array(shipback).flatten()
 
     def reset_entities(self):
         """

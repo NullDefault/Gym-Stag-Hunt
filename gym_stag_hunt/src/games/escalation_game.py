@@ -1,6 +1,6 @@
 from random import randint
 
-from numpy import zeros, uint8
+from numpy import zeros, uint8, array
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 from gym_stag_hunt.src.utils import overlaps_entity
@@ -17,12 +17,13 @@ class Escalation(AbstractGridGame):
     def __init__(self,
                  streak_break_punishment_factor,
                  # Super Class Params
-                 window_title, grid_size, screen_size, obs_type, load_renderer):
+                 window_title, grid_size, screen_size, obs_type, load_renderer, enable_multiagent):
         """
         :param streak_break_punishment_factor: Negative reinforcement for breaking the streak
         """
 
-        super(Escalation, self).__init__(grid_size=grid_size, screen_size=screen_size, obs_type=obs_type)
+        super(Escalation, self).__init__(grid_size=grid_size, screen_size=screen_size, obs_type=obs_type,
+                                         enable_multiagent=enable_multiagent)
 
         self._streak_break_punishment_factor = streak_break_punishment_factor
 
@@ -65,7 +66,10 @@ class Escalation(AbstractGridGame):
             self._streak = 0
             self._streak_active = False
 
-        return rewards
+        if self._enable_multiagent:
+            return float(rewards[0]), float(rewards[1])
+        else:
+            return float(rewards[0])
 
     def update(self, agent_moves):
         """
@@ -85,7 +89,7 @@ class Escalation(AbstractGridGame):
         """
         :return: list of all the entity coordinates
         """
-        return [self.A_AGENT, self.B_AGENT, self.MARK]
+        return array([self.A_AGENT, self.B_AGENT, self.MARK]).flatten()
 
     def reset_entities(self):
         """

@@ -1,6 +1,6 @@
 from math import hypot
 from random import choice
-from numpy import zeros, uint8
+from numpy import zeros, uint8, array
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 
@@ -24,7 +24,7 @@ class StagHunt(AbstractGridGame):
                  forage_reward,
                  mauling_punishment,
                  # Super Class Params
-                 window_title, grid_size, screen_size, obs_type, load_renderer):
+                 window_title, grid_size, screen_size, obs_type, load_renderer, enable_multiagent):
         """
         :param episodes_per_game: How many timesteps take place before we reset the entity positions.
         :param stag_reward: How much reinforcement the agents get for catching the stag
@@ -35,7 +35,8 @@ class StagHunt(AbstractGridGame):
         :param mauling_punishment: How much reinforcement the agents get for trying to catch a stag alone (MUST be neg.)
         """
 
-        super(StagHunt, self).__init__(grid_size=grid_size, screen_size=screen_size, obs_type=obs_type)
+        super(StagHunt, self).__init__(grid_size=grid_size, screen_size=screen_size, obs_type=obs_type,
+                                       enable_multiagent=enable_multiagent)
 
         # Config
         self._stag_follows        = stag_follows
@@ -92,12 +93,12 @@ class StagHunt(AbstractGridGame):
 
         if overlaps_entity(self.A_AGENT, self.STAG):
             if overlaps_entity(self.B_AGENT, self.STAG):
-                return self._stag_reward, self._stag_reward                 # Successful stag hunt
+                rewards = self._stag_reward, self._stag_reward                 # Successful stag hunt
             else:
                 if self._overlaps_plants(self.B_AGENT, self.PLANTS):
-                    return self._mauling_punishment, self._forage_reward    # A is mauled, B foraged
+                    rewards = self._mauling_punishment, self._forage_reward    # A is mauled, B foraged
                 else:
-                    return self._mauling_punishment, 0                      # A is mauled, B did not forage
+                    rewards = self._mauling_punishment, 0                      # A is mauled, B did not forage
 
         elif overlaps_entity(self.B_AGENT, self.STAG):
             """
@@ -105,21 +106,26 @@ class StagHunt(AbstractGridGame):
             so we can skip that check here
             """
             if self._overlaps_plants(self.A_AGENT, self.PLANTS):
-                return self._forage_reward, self._mauling_punishment        # A foraged, B is mauled
+                rewards = self._forage_reward, self._mauling_punishment        # A foraged, B is mauled
             else:
-                return 0, self._mauling_punishment                          # A did not forage, B is mauled
+                rewards = 0, self._mauling_punishment                          # A did not forage, B is mauled
 
         elif self._overlaps_plants(self.A_AGENT, self.PLANTS):
             if self._overlaps_plants(self.B_AGENT, self.PLANTS):
-                return self._forage_reward, self._forage_reward             # Both agents foraged
+                rewards = self._forage_reward, self._forage_reward             # Both agents foraged
             else:
-                return self._forage_reward, 0                               # Only A foraged
+                rewards = self._forage_reward, 0                               # Only A foraged
 
         else:
             if self._overlaps_plants(self.B_AGENT, self.PLANTS):
-                return 0, self._forage_reward                               # Only B foraged
+                rewards = 0, self._forage_reward                               # Only B foraged
             else:
-                return 0, 0                                                 # No one got anything
+                rewards = 0, 0                                                 # No one got anything
+
+        if self._enable_multiagent:
+            return float(rewards[0]), float(rewards[1])
+        else:
+            return float(rewards[0])
 
     def update(self, agent_moves):
         """
@@ -136,6 +142,8 @@ class StagHunt(AbstractGridGame):
 
         # Get Rewards
         iteration_rewards = self._calc_reward()
+        if not isinstance(iteration_rewards, list):
+            iteration_rewards = [iteration_rewards]
 
         # Reset prey if it was caught
         if iteration_rewards == (self._stag_reward, self._stag_reward):
@@ -160,6 +168,9 @@ class StagHunt(AbstractGridGame):
 
         info = {}
 
+        if not self._enable_multiagent:
+            iteration_rewards = iteration_rewards[0]
+
         return obs, iteration_rewards, game_done, info
 
     def _coord_observation(self):
@@ -168,7 +179,7 @@ class StagHunt(AbstractGridGame):
         """
         shipback = [self.A_AGENT, self.B_AGENT, self.STAG]
         shipback = shipback + self.PLANTS
-        return shipback
+        return array(shipback).flatten()
 
     """
     Movement Methods
@@ -220,9 +231,9 @@ class StagHunt(AbstractGridGame):
         :return:
         """
         if self._stag_follows:
-            stag_x, stag_y = self.STAG[0], self.STAG[1]
-            a_dist = hypot(stag_x - self.A_AGENT[0], stag_y - self.A_AGENT[1])
-            b_dist = hypot(stag_x - self.B_AGENT[0], stag_y - self.B_AGENT[1])
+            stag_x, stag_y = int(self.STAG[0]), int(self.STAG[1])
+            a_dist = hypot(stag_x - int(self.A_AGENT[0]), stag_y - int(self.A_AGENT[1]))
+            b_dist = hypot(stag_x - int(self.B_AGENT[0]), stag_y - int(self.B_AGENT[1]))
 
             if a_dist < b_dist:
                 agent_to_seek = 'a'

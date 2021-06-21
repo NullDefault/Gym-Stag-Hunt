@@ -11,6 +11,7 @@ class HarvestEnv(AbstractMarkovStagHuntEnv):
                  grid_size=(5, 5),
                  screen_size=(600, 600),
                  obs_type='image',
+                 enable_multiagent=False,
                  load_renderer=False,
                  max_plants=4,
                  chance_to_mature=.1,
@@ -32,7 +33,7 @@ class HarvestEnv(AbstractMarkovStagHuntEnv):
         if total_cells < 3:
             raise AttributeError('Grid is too small. Please specify a larger grid size.')
 
-        super(HarvestEnv, self).__init__(grid_size=grid_size, obs_type=obs_type)
+        super(HarvestEnv, self).__init__(grid_size=grid_size, obs_type=obs_type, enable_multiagent=enable_multiagent)
 
         self.game_title = 'harvest'
         self.max_plants = max_plants
@@ -47,6 +48,7 @@ class HarvestEnv(AbstractMarkovStagHuntEnv):
                             grid_size=grid_size,
                             screen_size=screen_size,
                             obs_type=obs_type,
+                            enable_multiagent=enable_multiagent,
                             load_renderer=load_renderer,
                             max_plants=max_plants,
                             chance_to_mature=chance_to_mature,
