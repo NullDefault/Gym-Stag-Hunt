@@ -68,7 +68,10 @@ class AbstractMarkovStagHuntEnv(Env, ABC):
                     self.game.RENDERER.update()
                     self.game.RENDERER.render_on_display()
                 else:
-                    print_matrix(self.game.get_observation(), self.game_title, self.game.GRID_DIMENSIONS)
+                    if obs is not None:
+                        print_matrix(obs, self.game_title, self.game.GRID_DIMENSIONS)
+                    else:
+                        print_matrix(self.game.get_observation(), self.game_title, self.game.GRID_DIMENSIONS)
 
     def close(self):
         """

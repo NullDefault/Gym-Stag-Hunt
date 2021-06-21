@@ -142,14 +142,14 @@ class Harvest(AbstractGridGame):
         """
         :return: tuple of all the entity coordinates
         """
-        shipback = [self.A_AGENT, self.B_AGENT]
+        a, b = self.AGENTS
+        shipback = [a[0], a[1], b[0], b[1]]
         maturity_flags = self.MATURITY_FLAGS
-        plant_data = []
         for idx, element in enumerate(self.PLANTS):
-            new_entry = zeros(3, dtype=uint8)
-            new_entry[0], new_entry[1], new_entry[2] = element[0], element[1], maturity_flags[idx]
-            plant_data.append(new_entry)
-        shipback = shipback, plant_data
+            new_entry = [0, 0, 0]
+            new_entry[0], new_entry[1], new_entry[2] = element[0], element[1], int(maturity_flags[idx])
+            shipback = shipback + new_entry
+
         return array(shipback).flatten()
 
     def reset_entities(self):

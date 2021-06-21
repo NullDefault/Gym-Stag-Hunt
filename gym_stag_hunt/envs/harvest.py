@@ -61,5 +61,4 @@ class HarvestEnv(AbstractMarkovStagHuntEnv):
         if obs_type == 'image':
             self.observation_space = Box(0, 255, shape=(grid_size[0]*TILE_SIZE, grid_size[1]*TILE_SIZE, 3), dtype=uint8)
         elif obs_type == 'coords':
-            self.observation_space = Tuple((Box(0, max(grid_size), shape=(2, 2), dtype=uint8),
-                                            Box(0, max(grid_size), shape=(max_plants, 3), dtype=uint8)))
+            self.observation_space = Box(0, max(grid_size), shape=(4 + max_plants*3,), dtype=uint8)
