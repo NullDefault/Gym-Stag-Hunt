@@ -138,12 +138,15 @@ class Harvest(AbstractGridGame):
 
         return obs, iteration_rewards, False, info
 
-    def _coord_observation(self):
+    def _coord_observation(self, perspective='a'):
         """
         :return: tuple of all the entity coordinates
         """
         a, b = self.AGENTS
-        shipback = [a[0], a[1], b[0], b[1]]
+        if perspective == 'a':
+            shipback = [a[0], a[1], b[0], b[1]]
+        else:
+            shipback = [b[0], b[1], a[0], a[1]]
         maturity_flags = self.MATURITY_FLAGS
         for idx, element in enumerate(self.PLANTS):
             new_entry = [0, 0, 0]
