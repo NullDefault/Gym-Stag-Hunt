@@ -4,10 +4,10 @@ from numpy import zeros, uint8, array
 from numpy.random import choice
 
 # Possible Moves
-LEFT  = 0
-DOWN  = 1
+LEFT = 0
+DOWN = 1
 RIGHT = 2
-UP    = 3
+UP = 3
 
 
 class AbstractGridGame(ABC):
@@ -192,4 +192,3 @@ class AbstractGridGame(ABC):
     @property
     def COORD_OBS(self):
         return self._coord_observation()
-

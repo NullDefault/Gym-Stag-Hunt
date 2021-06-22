@@ -1,6 +1,6 @@
 from random import uniform
 
-from numpy import zeros, uint8, array
+from numpy import array
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 from gym_stag_hunt.src.utils import overlaps_entity, spawn_plants, respawn_plants
@@ -36,7 +36,7 @@ class Harvest(AbstractGridGame):
         self._max_plants = max_plants
         self._chance_to_mature = chance_to_mature
         self._chance_to_die = chance_to_die
-        self._tagged_plants = []                            # harvested plants that need to be re-spawned
+        self._tagged_plants = []  # harvested plants that need to be re-spawned
 
         # Reinforcement variables
         self._young_reward = young_reward
@@ -45,7 +45,7 @@ class Harvest(AbstractGridGame):
         # Entity Positions
         self._plants = []
         self._maturity_flags = [False] * max_plants
-        self.reset_entities()                               # place the entities on the grid
+        self.reset_entities()  # place the entities on the grid
 
         # If rendering is enabled, we will instantiate the rendering pipeline
         if obs_type == 'image' or load_renderer:

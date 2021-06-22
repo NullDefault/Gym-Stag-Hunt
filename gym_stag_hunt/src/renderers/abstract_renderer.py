@@ -1,6 +1,7 @@
 import pygame as pg
-from gym_stag_hunt.src.entities import Entity, get_gui_window_icon
 from numpy import rot90, flipud
+
+from gym_stag_hunt.src.entities import Entity, get_gui_window_icon
 
 """
 Constants
@@ -18,14 +19,14 @@ class AbstractRenderer:
         :param window_title: What we set as the window caption
         :param screen_size: The size of the virtual display on which we will be rendering stuff on
         """
-        pg.init()                                   # initialize pygame
-        pg.display.set_caption(window_title)        # set the window caption
+        pg.init()  # initialize pygame
+        pg.display.set_caption(window_title)  # set the window caption
         pg.display.set_icon(get_gui_window_icon())  # set the window icon
-        pg.display.set_mode((1, 1), pg.NOFRAME)     # set video mode without creating display
-        self._clock = pg.time.Clock()               # create clock object
-        self._screen = None                         # temp screen attribute
-        self._screen_size = screen_size             # record screen size as an attribute
-        self._game = game                           # record game as an attribute
+        pg.display.set_mode((1, 1), pg.NOFRAME)  # set video mode without creating display
+        self._clock = pg.time.Clock()  # create clock object
+        self._screen = None  # temp screen attribute
+        self._screen_size = screen_size  # record screen size as an attribute
+        self._game = game  # record game as an attribute
 
         grid_size = game.GRID_DIMENSIONS
         game_surface_size = TILE_SIZE * grid_size[0], TILE_SIZE * grid_size[1]
@@ -178,5 +179,3 @@ class AbstractRenderer:
     @property
     def CELL_SIZE(self):
         return self.CELL_W, self.CELL_H
-
-

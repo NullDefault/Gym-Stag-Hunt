@@ -46,7 +46,7 @@ class Escalation(AbstractGridGame):
         a_on_mark = overlaps_entity(self.A_AGENT, self.MARK)
         b_on_mark = overlaps_entity(self.B_AGENT, self.MARK)
 
-        punishment = 0 - (self._streak_break_punishment_factor*self._streak)
+        punishment = 0 - (self._streak_break_punishment_factor * self._streak)
 
         if a_on_mark and b_on_mark:
             rewards = 1, 1

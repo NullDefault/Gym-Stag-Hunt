@@ -11,7 +11,7 @@ ENVS = {
     'HARVEST': HarvestEnv,
     'ESCALATION': EscalationEnv
 }
-ENV = 'ESCALATION'
+ENV = 'HUNT'
 
 
 def print_ep(obs, reward, done, info):

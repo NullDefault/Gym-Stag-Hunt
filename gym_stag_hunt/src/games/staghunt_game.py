@@ -1,6 +1,6 @@
 from math import hypot
-from random import choice
 from numpy import zeros, uint8, array
+from numpy.random import choice
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 
