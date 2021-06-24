@@ -72,12 +72,9 @@ class AbstractGridGame(ABC):
         return self._move_dispatcher()[action](entity_pos)
 
     def _move_agents(self, agent_moves):
-        if isinstance(agent_moves, list):
+        if self._enable_multiagent:
             self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves[0])
-            if len(agent_moves) > 1:
-                self.B_AGENT = self._move_entity(self.B_AGENT, agent_moves[1])
-            else:
-                self.B_AGENT = self._random_move(self.B_AGENT)
+            self.B_AGENT = self._move_entity(self.B_AGENT, agent_moves[1])
         else:
             self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves)
             self.B_AGENT = self._random_move(self.B_AGENT)

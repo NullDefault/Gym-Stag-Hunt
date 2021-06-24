@@ -66,10 +66,7 @@ class Escalation(AbstractGridGame):
             self._streak = 0
             self._streak_active = False
 
-        if self._enable_multiagent:
-            return float(rewards[0]), float(rewards[1])
-        else:
-            return float(rewards[0])
+        return float(rewards[0]), float(rewards[1])
 
     def update(self, agent_moves):
         """
@@ -82,13 +79,15 @@ class Escalation(AbstractGridGame):
         iteration_rewards = self._calc_reward()
         obs = self.get_observation()
         info = {}
+        done = False
 
-        return obs, iteration_rewards, False, info
+        if self._enable_multiagent:
+            return (obs, obs), iteration_rewards, done, info
+        else:
+            return obs, iteration_rewards[0], done, info
 
     def _coord_observation(self):
         """
-        :param perspective: Is the observation from the perspective of the a or b agent?
-                            (Affects the placement of the agent's position in the observation vector)
         :return: list of all the entity coordinates
         """
         return array([self.A_AGENT, self.B_AGENT, self.MARK]).flatten()

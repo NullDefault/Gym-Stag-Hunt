@@ -100,10 +100,7 @@ class Harvest(AbstractGridGame):
             else:
                 b_reward += self._young_reward
 
-        if self._enable_multiagent:
-            return float(a_reward), float(b_reward)
-        else:
-            return float(a_reward)
+        return float(a_reward), float(b_reward)
 
     def update(self, agent_moves):
         """
@@ -133,10 +130,13 @@ class Harvest(AbstractGridGame):
             self._tagged_plants = []
 
         obs = self.get_observation()
-
+        done = False
         info = {}
 
-        return obs, iteration_rewards, False, info
+        if self._enable_multiagent:
+            return (obs, obs), iteration_rewards, done, info
+        else:
+            return obs, iteration_rewards[0], done, info
 
     def _coord_observation(self):
         """

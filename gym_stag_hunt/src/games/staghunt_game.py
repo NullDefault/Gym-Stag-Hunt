@@ -122,10 +122,7 @@ class StagHunt(AbstractGridGame):
             else:
                 rewards = 0, 0                                                 # No one got anything
 
-        if self._enable_multiagent:
-            return float(rewards[0]), float(rewards[1])
-        else:
-            return float(rewards[0])
+        return float(rewards[0]), float(rewards[1])
 
     def update(self, agent_moves):
         """
@@ -158,20 +155,19 @@ class StagHunt(AbstractGridGame):
             self._tagged_plants = []
             self.PLANTS = new_plants
 
-        game_done = self._eps_to_go == 0
+        done = self._eps_to_go == 0
 
-        if game_done:
+        if done:
             self._eps_to_go = self._eps_per_game
             self.reset_entities()
 
         obs = self.get_observation()
-
         info = {}
 
-        if not self._enable_multiagent:
-            iteration_rewards = iteration_rewards[0]
-
-        return obs, iteration_rewards, game_done, info
+        if self._enable_multiagent:
+            return (obs, obs), iteration_rewards, done, info
+        else:
+            return obs, iteration_rewards[0], done, info
 
     def _coord_observation(self):
         """

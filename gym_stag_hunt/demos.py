@@ -24,7 +24,7 @@ def print_ep(obs, reward, done, info):
 
 
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='image')
+    env = ENVS[ENV](obs_type='image', enable_multiagent=True)
     obs = env.reset()
     for i in range(10000):
         actions = [env.action_space.sample(), env.action_space.sample()]
