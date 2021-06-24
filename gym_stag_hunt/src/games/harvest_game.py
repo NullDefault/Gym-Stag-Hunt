@@ -1,6 +1,5 @@
-from random import uniform
-
 from numpy import array
+from numpy.random import uniform
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 from gym_stag_hunt.src.utils import overlaps_entity, spawn_plants, respawn_plants
@@ -109,7 +108,10 @@ class Harvest(AbstractGridGame):
                             a random action.
         :return: observation, rewards, is the game done
         """
-        self._move_agents(agent_moves=agent_moves)
+        if self._enable_multiagent:
+            self._move_agents(agent_moves=agent_moves)
+        else:
+            self._move_agents(agent_moves=[agent_moves, self._random_move()])
 
         for idx, plant in enumerate(self._plants):
             is_mature = self._maturity_flags[idx]

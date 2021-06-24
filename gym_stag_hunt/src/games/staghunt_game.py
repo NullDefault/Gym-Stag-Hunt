@@ -1,11 +1,9 @@
-from math import hypot
 from numpy import zeros, uint8, array
-from numpy.random import choice
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 
-from gym_stag_hunt.src.games.abstract_grid_game import UP, DOWN, LEFT, RIGHT
-from gym_stag_hunt.src.utils import overlaps_entity, place_entity_in_unoccupied_cell, spawn_plants, respawn_plants
+from gym_stag_hunt.src.utils import overlaps_entity, place_entity_in_unoccupied_cell, spawn_plants, respawn_plants, \
+    wrapped_distance
 
 # Entity Keys
 A_AGENT = 0
@@ -20,6 +18,7 @@ class StagHunt(AbstractGridGame):
                  stag_reward,
                  stag_follows,
                  run_away_after_maul,
+                 opponent_policy,
                  forage_quantity,
                  forage_reward,
                  mauling_punishment,
@@ -41,6 +40,7 @@ class StagHunt(AbstractGridGame):
         # Config
         self._stag_follows        = stag_follows
         self._run_away_after_maul = run_away_after_maul
+        self._opponent_policy     = opponent_policy
 
         # Reinforcement Variables
         self._stag_reward        = stag_reward              # record RL values as attributes
@@ -127,20 +127,24 @@ class StagHunt(AbstractGridGame):
     def update(self, agent_moves):
         """
         Takes in agent actions and calculates next game state.
-        :param agent_moves: List of actions for the two agents. If nothing is passed for the second agent, it does a
-                            a random action.
+        :param agent_moves: If multi-agent, a tuple of actions. Otherwise a single action and the opponent takes an
+                            action according to its established policy.
         :return: observation, rewards, is the game done
         """
         self._eps_to_go = self._eps_to_go - 1   # decrement reset counter
 
         # Move Entities
         self._move_stag()
-        self._move_agents(agent_moves=agent_moves)
+        if self._enable_multiagent:
+            self._move_agents(agent_moves=agent_moves)
+        else:
+            if self._opponent_policy == 'random':
+                self._move_agents(agent_moves=[agent_moves, self._random_move()])
+            elif self._opponent_policy == 'pursuit':
+                self._move_agents(agent_moves=[agent_moves, self._seek_entity(self.B_AGENT, self.STAG)])
 
         # Get Rewards
         iteration_rewards = self._calc_reward()
-        if not isinstance(iteration_rewards, list):
-            iteration_rewards = [iteration_rewards]
 
         # Reset prey if it was caught
         if iteration_rewards == (self._stag_reward, self._stag_reward):
@@ -191,35 +195,9 @@ class StagHunt(AbstractGridGame):
         if agent_to_seek == 'b':
             agent = self.B_AGENT
 
-        stag_x, stag_y = self.STAG[0], self.STAG[1]
+        move = self._seek_entity(self.STAG, agent)
 
-        left = stag_x > agent[0]
-        right = stag_x < agent[0]
-        up = stag_y > agent[1]
-        down = stag_y < agent[1]
-
-        options = []
-        if left:
-            options.append(LEFT)
-        if down:
-            options.append(DOWN)
-        if right:
-            options.append(RIGHT)
-        if up:
-            options.append(UP)
-
-        if not options:
-            options = [LEFT, DOWN, RIGHT, UP]
-            if stag_x == 0:
-                options.remove(LEFT)
-            elif stag_x == self.GRID_W - 1:
-                options.remove(RIGHT)
-            if stag_y == self.GRID_H - 1:
-                options.remove(DOWN)
-            elif stag_y == 0:
-                options.remove(UP)
-
-        return self._move_entity(self.STAG, choice(options))
+        return self._move_entity(self.STAG, move)
 
     def _move_stag(self):
         """
@@ -227,9 +205,8 @@ class StagHunt(AbstractGridGame):
         :return:
         """
         if self._stag_follows:
-            stag_x, stag_y = int(self.STAG[0]), int(self.STAG[1])
-            a_dist = hypot(stag_x - int(self.A_AGENT[0]), stag_y - int(self.A_AGENT[1]))
-            b_dist = hypot(stag_x - int(self.B_AGENT[0]), stag_y - int(self.B_AGENT[1]))
+            a_dist = wrapped_distance(self.STAG, self.A_AGENT, self.GRID_DIMENSIONS)
+            b_dist = wrapped_distance(self.STAG, self.B_AGENT, self.GRID_DIMENSIONS)
 
             if a_dist < b_dist:
                 agent_to_seek = 'a'
@@ -238,7 +215,7 @@ class StagHunt(AbstractGridGame):
 
             self.STAG = self._seek_agent(agent_to_seek)
         else:
-            self.STAG = self._random_move(self.STAG)
+            self.STAG = self._move_entity(self.STAG, self._random_move())
 
     def reset_entities(self):
         """

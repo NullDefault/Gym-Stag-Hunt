@@ -4,6 +4,7 @@ from gym_stag_hunt.envs.simple import SimpleEnv
 from gym_stag_hunt.envs.hunt import HuntEnv
 from gym_stag_hunt.envs.escalation import EscalationEnv
 from gym_stag_hunt.envs.harvest import HarvestEnv
+from gym_stag_hunt.src.games.abstract_grid_game import UP, LEFT, DOWN, RIGHT
 
 ENVS = {
     'CLASSIC': SimpleEnv,
@@ -11,7 +12,7 @@ ENVS = {
     'HARVEST': HarvestEnv,
     'ESCALATION': EscalationEnv
 }
-ENV = 'HUNT'
+ENV = 'ESCALATION'
 
 
 def print_ep(obs, reward, done, info):
@@ -23,20 +24,39 @@ def print_ep(obs, reward, done, info):
     })
 
 
+def dir_parse(key):
+    d = {
+        LEFT: "LEFT",
+        UP: "UP",
+        DOWN: "DOWN",
+        RIGHT: "RIGHT"
+    }
+    return d[key]
+
+
+def manual_input():
+    i = input()
+    if i in ['w', 'W']:
+        i = UP
+    elif i in ['a', 'A']:
+        i = LEFT
+    elif i in ['s', 'S']:
+        i = DOWN
+    elif i in ['d', 'D']:
+        i = RIGHT
+
+    return i
+
+
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='image', enable_multiagent=True)
+    env = ENVS[ENV](obs_type='image', opponent_policy='pursuit')
     obs = env.reset()
     for i in range(10000):
-        actions = [env.action_space.sample(), env.action_space.sample()]
-        if ENV != 'CLASSIC':
-            a, b = env.game.AGENTS
-            while (env.game._move_entity(a, actions[0]) == a).all():
-                actions[0] = env.action_space.sample()
-            while (env.game._move_entity(b, actions[1]) == b).all():
-                actions[1] = env.action_space.sample()
+        actions = env.game._seek_entity(env.game.A_AGENT, env.game.MARK)
+
         obs, rewards, done, info = env.step(actions=actions)
-        print_ep(obs, rewards, done, info)
-        # sleep(.6)
+        # print_ep(obs, rewards, done, info)
+        sleep(1.9)
         if ENV == 'CLASSIC':
             env.render(rewards=rewards)
         else:

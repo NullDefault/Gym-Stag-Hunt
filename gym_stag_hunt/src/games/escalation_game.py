@@ -1,6 +1,5 @@
-from random import randint
-
 from numpy import zeros, uint8, array
+from numpy.random import randint
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 from gym_stag_hunt.src.utils import overlaps_entity
@@ -15,7 +14,7 @@ MARK = 2
 
 class Escalation(AbstractGridGame):
     def __init__(self,
-                 streak_break_punishment_factor,
+                 streak_break_punishment_factor, opponent_policy,
                  # Super Class Params
                  window_title, grid_size, screen_size, obs_type, load_renderer, enable_multiagent):
         """
@@ -26,7 +25,7 @@ class Escalation(AbstractGridGame):
                                          enable_multiagent=enable_multiagent)
 
         self._streak_break_punishment_factor = streak_break_punishment_factor
-
+        self._opponent_policy = opponent_policy
         self._mark = zeros(2, dtype=uint8)
         self._streak_active = False
         self._streak = 0
@@ -61,7 +60,7 @@ class Escalation(AbstractGridGame):
             if not self._streak_active:
                 self._streak_active = True
             self._streak = self._streak + 1
-            self.MARK = self._random_move(self.MARK)
+            self.MARK = self._move_entity(self.MARK, self._random_move())
         else:
             self._streak = 0
             self._streak_active = False
@@ -75,7 +74,14 @@ class Escalation(AbstractGridGame):
                             a random action.
         :return: observation, rewards, is the game done
         """
-        self._move_agents(agent_moves=agent_moves)
+        if self._enable_multiagent:
+            self._move_agents(agent_moves=agent_moves)
+        else:
+            if self._opponent_policy == 'random':
+                self._move_agents(agent_moves=[agent_moves, self._random_move()])
+            elif self._opponent_policy == 'pursuit':
+                self._move_agents(agent_moves=[agent_moves, self._seek_entity(self.B_AGENT, self.MARK)])
+
         iteration_rewards = self._calc_reward()
         obs = self.get_observation()
         info = {}

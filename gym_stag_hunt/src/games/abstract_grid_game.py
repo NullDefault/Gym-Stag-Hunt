@@ -1,6 +1,6 @@
 from abc import ABC
 
-from numpy import zeros, uint8, array
+from numpy import zeros, uint8, array, inf
 from numpy.random import choice
 
 # Possible Moves
@@ -72,12 +72,8 @@ class AbstractGridGame(ABC):
         return self._move_dispatcher()[action](entity_pos)
 
     def _move_agents(self, agent_moves):
-        if self._enable_multiagent:
-            self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves[0])
-            self.B_AGENT = self._move_entity(self.B_AGENT, agent_moves[1])
-        else:
-            self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves)
-            self.B_AGENT = self._random_move(self.B_AGENT)
+        self.A_AGENT = self._move_entity(self.A_AGENT, agent_moves[0])
+        self.B_AGENT = self._move_entity(self.B_AGENT, agent_moves[1])
 
     def _reset_agents(self):
         """
@@ -86,25 +82,64 @@ class AbstractGridGame(ABC):
         """
         self.A_AGENT, self.B_AGENT = [0, 0], [self.GRID_W - 1, 0]
 
-    def _random_move(self, pos):
+    def _random_move(self):
         """
-        Move in a random direction
-        :param pos: starting position
-        :return: new position
+        :return: a random direction
         """
-        options = [LEFT, RIGHT, UP, DOWN]
-        if pos[0] == 0:
-            options.remove(LEFT)
-        elif pos[0] == self.GRID_W - 1:
-            options.remove(RIGHT)
+        return choice([LEFT, RIGHT, UP, DOWN])
 
-        if pos[1] == 0:
-            options.remove(UP)
-        elif pos[1] == self.GRID_H - 1:
-            options.remove(DOWN)
+    def _seek_entity(self, seeker, target):
+        """
+        Returns a move which will move the seeker towards the target. If the two entities are on same tile, the seeker
+        will take a random move which does not go off the screen.
+        :param seeker: entity doing the following
+        :param target: entity getting followed
+        :return: up, left, down or up move
+        """
+        seeker = seeker.astype(int)
+        target = target.astype(int)
+        if seeker[0] > target[0]:
+            l_dist = seeker[0] - target[0]
+            r_dist = abs(seeker[0] - (target[0] + self.GRID_W))
+        elif seeker[0] < target[0]:
+            l_dist = abs(seeker[0] - (target[0] - self.GRID_W))
+            r_dist = target[0] - seeker[0]
+        else:
+            l_dist = inf
+            r_dist = inf
 
-        move = choice(options)
-        return self._move_dispatcher()[move](pos)
+        if seeker[1] > target[1]:
+            u_dist = seeker[1] - target[1]
+            d_dist = abs(seeker[1] - (target[1] + self.GRID_H))
+        elif seeker[1] < target[1]:
+            u_dist = abs(seeker[1] - (target[1] - self.GRID_H))
+            d_dist = target[1] - seeker[1]
+        else:
+            u_dist = inf
+            d_dist = inf
+
+        min_dist = min([l_dist, r_dist, d_dist, u_dist])
+
+        left  = l_dist == min_dist
+        right = r_dist == min_dist
+        up    = u_dist == min_dist
+        down  = d_dist == min_dist
+
+        options = []
+        if left:
+            options.append(LEFT)
+        if down:
+            options.append(DOWN)
+        if right:
+            options.append(RIGHT)
+        if up:
+            options.append(UP)
+
+        if not options:
+            options = [LEFT, DOWN, RIGHT, UP]
+        shipback = choice(options)
+
+        return shipback
 
     def _move_left(self, pos):
         """
@@ -113,7 +148,7 @@ class AbstractGridGame(ABC):
         """
         new_x = pos[0] - 1
         if new_x == -1:
-            new_x = 0
+            new_x = self.GRID_W - 1
         return new_x, pos[1]
 
     def _move_right(self, pos):
@@ -123,7 +158,7 @@ class AbstractGridGame(ABC):
         """
         new_x = pos[0] + 1
         if new_x == self.GRID_W:
-            new_x = self.GRID_W - 1
+            new_x = 0
         return new_x, pos[1]
 
     def _move_up(self, pos):
@@ -133,7 +168,7 @@ class AbstractGridGame(ABC):
         """
         new_y = pos[1] - 1
         if new_y == -1:
-            new_y = 0
+            new_y = self.GRID_H - 1
         return pos[0], new_y
 
     def _move_down(self, pos):
@@ -143,7 +178,7 @@ class AbstractGridGame(ABC):
         """
         new_y = pos[1] + 1
         if new_y == self.GRID_H:
-            new_y = self.GRID_H - 1
+            new_y = 0
         return pos[0], new_y
 
     """

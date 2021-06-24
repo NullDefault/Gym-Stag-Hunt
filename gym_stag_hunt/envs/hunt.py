@@ -12,6 +12,7 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
                  screen_size=(600, 600),
                  obs_type='image',
                  enable_multiagent=False,
+                 opponent_policy='random',
                  load_renderer=False,
                  episodes_per_game=1000,
                  stag_follows=True,
@@ -68,7 +69,8 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
                              run_away_after_maul=run_away_after_maul,
                              forage_quantity=forage_quantity,
                              forage_reward=forage_reward,
-                             mauling_punishment=mauling_punishment)
+                             mauling_punishment=mauling_punishment,
+                             opponent_policy=opponent_policy)
 
         self.action_space = Discrete(4)  # up, down, left, right on the grid
 

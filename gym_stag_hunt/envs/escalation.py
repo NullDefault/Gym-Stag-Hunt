@@ -12,6 +12,7 @@ class EscalationEnv(AbstractMarkovStagHuntEnv):
                  screen_size=(600, 600),
                  obs_type='image',
                  enable_multiagent=False,
+                 opponent_policy='pursuit',
                  load_renderer=False,
                  streak_break_punishment_factor=0.5
                  ):
@@ -36,7 +37,8 @@ class EscalationEnv(AbstractMarkovStagHuntEnv):
                                obs_type=obs_type,
                                enable_multiagent=enable_multiagent,
                                load_renderer=load_renderer,
-                               streak_break_punishment_factor=streak_break_punishment_factor)
+                               streak_break_punishment_factor=streak_break_punishment_factor,
+                               opponent_policy=opponent_policy)
 
         # Environment Config
         self.action_space = Discrete(4)  # up, down, left, right on the grid
