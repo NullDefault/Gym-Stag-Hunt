@@ -173,14 +173,11 @@ class StagHunt(AbstractGridGame):
 
         return obs, iteration_rewards, game_done, info
 
-    def _coord_observation(self, perspective='a'):
+    def _coord_observation(self):
         """
         :return: list of all the entity coordinates
         """
-        if perspective == 'a':
-            shipback = [self.A_AGENT, self.B_AGENT, self.STAG]
-        else:
-            shipback = [self.B_AGENT, self.A_AGENT, self.STAG]
+        shipback = [self.A_AGENT, self.B_AGENT, self.STAG]
         shipback = shipback + self.PLANTS
         return array(shipback).flatten()
 
@@ -275,10 +272,7 @@ class StagHunt(AbstractGridGame):
 
     @PLANTS.setter
     def PLANTS(self, new_pos):
-        if len(new_pos) == self._forage_quantity:
-            self._plants_pos = new_pos
-        else:
-            print("Something's fucked with the plants")
+        self._plants_pos = new_pos
 
     @property
     def ENTITY_POSITIONS(self):

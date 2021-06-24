@@ -85,16 +85,13 @@ class Escalation(AbstractGridGame):
 
         return obs, iteration_rewards, False, info
 
-    def _coord_observation(self, perspective='a'):
+    def _coord_observation(self):
         """
         :param perspective: Is the observation from the perspective of the a or b agent?
                             (Affects the placement of the agent's position in the observation vector)
         :return: list of all the entity coordinates
         """
-        if perspective == 'a':
-            return array([self.A_AGENT, self.B_AGENT, self.MARK]).flatten()
-        else:
-            return array([self.B_AGENT, self.A_AGENT, self.MARK]).flatten()
+        return array([self.A_AGENT, self.B_AGENT, self.MARK]).flatten()
 
     def reset_entities(self):
         """
