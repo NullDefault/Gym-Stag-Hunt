@@ -87,7 +87,10 @@ class Escalation(AbstractGridGame):
         done = False
 
         if self._enable_multiagent:
-            return (obs, obs), iteration_rewards, done, info
+            if self._obs_type == 'coords':
+                return (obs, self._flip_coord_observation_perspective(obs)), iteration_rewards, done, info
+            else:
+                return (obs, obs), iteration_rewards, done, info
         else:
             return obs, iteration_rewards[0], done, info
 

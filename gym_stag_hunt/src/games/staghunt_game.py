@@ -1,9 +1,8 @@
-from numpy import zeros, uint8, array
+from numpy import zeros, uint8, array, hypot
 
 from gym_stag_hunt.src.games.abstract_grid_game import AbstractGridGame
 
-from gym_stag_hunt.src.utils import overlaps_entity, place_entity_in_unoccupied_cell, spawn_plants, respawn_plants, \
-    wrapped_distance
+from gym_stag_hunt.src.utils import overlaps_entity, place_entity_in_unoccupied_cell, spawn_plants, respawn_plants
 
 # Entity Keys
 A_AGENT = 0
@@ -169,7 +168,10 @@ class StagHunt(AbstractGridGame):
         info = {}
 
         if self._enable_multiagent:
-            return (obs, obs), iteration_rewards, done, info
+            if self._obs_type == 'coords':
+                return (obs, self._flip_coord_observation_perspective(obs)), iteration_rewards, done, info
+            else:
+                return (obs, obs), iteration_rewards, done, info
         else:
             return obs, iteration_rewards[0], done, info
 
@@ -205,8 +207,9 @@ class StagHunt(AbstractGridGame):
         :return:
         """
         if self._stag_follows:
-            a_dist = wrapped_distance(self.STAG, self.A_AGENT, self.GRID_DIMENSIONS)
-            b_dist = wrapped_distance(self.STAG, self.B_AGENT, self.GRID_DIMENSIONS)
+            stag, agents = self.STAG, self.AGENTS
+            a_dist = hypot(int(agents[0][0]) - int(stag[0]), int(agents[0][1]) - int(stag[1]))
+            b_dist = hypot(int(agents[1][0]) - int(stag[0]), int(agents[1][1]) - int(stag[1]))
 
             if a_dist < b_dist:
                 agent_to_seek = 'a'
