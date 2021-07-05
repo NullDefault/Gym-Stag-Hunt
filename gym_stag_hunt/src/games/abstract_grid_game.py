@@ -8,6 +8,7 @@ LEFT = 0
 DOWN = 1
 RIGHT = 2
 UP = 3
+STAND = 4
 
 
 class AbstractGridGame(ABC):
@@ -59,7 +60,8 @@ class AbstractGridGame(ABC):
             LEFT: self._move_left,
             DOWN: self._move_down,
             RIGHT: self._move_right,
-            UP: self._move_up
+            UP: self._move_up,
+            STAND: self._stand
         }
 
     def _move_entity(self, entity_pos, action):
@@ -120,7 +122,7 @@ class AbstractGridGame(ABC):
             options.append(DOWN)
 
         if not options:
-            options = [LEFT, DOWN, RIGHT, UP]
+            options = [STAND]
         shipback = choice(options)
 
         return shipback
@@ -164,6 +166,9 @@ class AbstractGridGame(ABC):
         if new_y == self.GRID_H:
             new_y = self.GRID_H - 1
         return pos[0], new_y
+
+    def _stand(self, pos):
+        return pos
 
     """
     Properties

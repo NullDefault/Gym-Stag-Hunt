@@ -41,7 +41,7 @@ class EscalationEnv(AbstractMarkovStagHuntEnv):
                                opponent_policy=opponent_policy)
 
         # Environment Config
-        self.action_space = Discrete(4)  # up, down, left, right on the grid
+        self.action_space = Discrete(5)  # up, down, left, right or stand
         if obs_type == 'image':  # Observation is the rgb pixel array
             self.observation_space = Box(0, 255, shape=(grid_size[0]*TILE_SIZE, grid_size[1]*TILE_SIZE, 3), dtype=uint8)
         elif obs_type == 'coords':

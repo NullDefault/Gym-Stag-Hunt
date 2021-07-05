@@ -72,7 +72,7 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
                              mauling_punishment=mauling_punishment,
                              opponent_policy=opponent_policy)
 
-        self.action_space = Discrete(4)  # up, down, left, right on the grid
+        self.action_space = Discrete(5)  # up, down, left, right or stand
 
         if obs_type == 'image':
             self.observation_space = Box(0, 255, shape=(grid_size[0]*TILE_SIZE, grid_size[1]*TILE_SIZE, 3), dtype=uint8)
