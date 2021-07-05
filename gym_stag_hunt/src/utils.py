@@ -119,13 +119,3 @@ def respawn_plants(plants, tagged_plants, grid_dims, used_coordinates):
         new_plant[0], new_plant[1] = new_pos
         plants[tagged_plant] = new_plant
     return plants
-
-
-def wrapped_distance(p1, p2, shape):
-    """Return the wrapped distance between two points.
-    The Manhattan distance from p1 to p2 in a grid of the given shape
-    is computed, taking wrapping around the edges of the grid into account.
-    """
-    deltax = abs(int(p1[0]) - int(p2[0]))
-    deltay = abs(int(p1[1]) - int(p2[1]))
-    return min(deltax, shape[0] - deltax) + min(deltay, shape[1] - deltay)

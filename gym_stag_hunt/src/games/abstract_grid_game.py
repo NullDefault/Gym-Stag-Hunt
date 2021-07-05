@@ -48,6 +48,23 @@ class AbstractGridGame(ABC):
     def _coord_observation(self):
         return array(self.AGENTS)
 
+    def flip_coord_observation_perspective(self, a_obs):
+        """
+        Transforms the default observation (which is "from the perspective of agent A" as it's coordinates are in the
+        first index) into the "perspective of agent B" (by flipping the positions of the A and B coordinates in the
+        observation array)
+        :param a_obs: Original observation
+        :return: Original observation, from the perspective of agent B
+        """
+        ax, ay = a_obs[0], a_obs[1]
+        bx, by = a_obs[2], a_obs[3]
+
+        b_obs = a_obs
+        b_obs[0], b_obs[1] = bx, by
+        b_obs[2], b_obs[3] = ax, ay
+
+        return b_obs
+
     """
     Movement Methods
     """
