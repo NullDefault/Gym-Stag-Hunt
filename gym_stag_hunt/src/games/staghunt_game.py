@@ -139,7 +139,7 @@ class StagHunt(AbstractGridGame):
             self._move_agents(agent_moves=agent_moves)
         else:
             if self._opponent_policy == 'random':
-                self._move_agents(agent_moves=[agent_moves, self._random_move()])
+                self._move_agents(agent_moves=[agent_moves, self._random_move(self.B_AGENT)])
             elif self._opponent_policy == 'pursuit':
                 self._move_agents(agent_moves=[agent_moves, self._seek_entity(self.B_AGENT, self.STAG)])
 
@@ -215,7 +215,7 @@ class StagHunt(AbstractGridGame):
 
             self.STAG = self._seek_agent(agent_to_seek)
         else:
-            self.STAG = self._move_entity(self.STAG, self._random_move())
+            self.STAG = self._move_entity(self.STAG, self._random_move(self.STAG))
 
     def reset_entities(self):
         """

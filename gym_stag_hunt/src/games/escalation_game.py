@@ -46,7 +46,6 @@ class Escalation(AbstractGridGame):
         b_on_mark = overlaps_entity(self.B_AGENT, self.MARK)
 
         punishment = 0 - (self._streak_break_punishment_factor * self._streak)
-
         if a_on_mark and b_on_mark:
             rewards = 1, 1
         elif a_on_mark:
@@ -60,7 +59,7 @@ class Escalation(AbstractGridGame):
             if not self._streak_active:
                 self._streak_active = True
             self._streak = self._streak + 1
-            self.MARK = self._move_entity(self.MARK, self._random_move())
+            self.MARK = self._move_entity(self.MARK, self._random_move(self.MARK))
         else:
             self._streak = 0
             self._streak_active = False
@@ -78,7 +77,7 @@ class Escalation(AbstractGridGame):
             self._move_agents(agent_moves=agent_moves)
         else:
             if self._opponent_policy == 'random':
-                self._move_agents(agent_moves=[agent_moves, self._random_move()])
+                self._move_agents(agent_moves=[agent_moves, self._random_move(self.B_AGENT)])
             elif self._opponent_policy == 'pursuit':
                 self._move_agents(agent_moves=[agent_moves, self._seek_entity(self.B_AGENT, self.MARK)])
 

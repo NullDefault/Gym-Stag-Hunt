@@ -111,7 +111,7 @@ class Harvest(AbstractGridGame):
         if self._enable_multiagent:
             self._move_agents(agent_moves=agent_moves)
         else:
-            self._move_agents(agent_moves=[agent_moves, self._random_move()])
+            self._move_agents(agent_moves=[agent_moves, self._random_move(self.B_AGENT)])
 
         for idx, plant in enumerate(self._plants):
             is_mature = self._maturity_flags[idx]

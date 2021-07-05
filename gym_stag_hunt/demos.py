@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
         obs, rewards, done, info = env.step(actions=actions)
         # print_ep(obs, rewards, done, info)
-        sleep(1.9)
+        sleep(.6)
         if ENV == 'CLASSIC':
             env.render(rewards=rewards)
         else:
