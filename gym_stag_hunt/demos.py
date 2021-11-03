@@ -50,18 +50,17 @@ def manual_input():
     return i
 
 
-ENV = 'HUNT'
+ENV = 'ESCALATION'
 
 if __name__ == "__main__":
-    env = ENVS[ENV](obs_type='coords', enable_multiagent=True)
+    env = ENVS[ENV](obs_type='image', enable_multiagent=True)
     obs = env.reset()
     for i in range(10000):
         actions = [env.action_space.sample(), env.action_space.sample()]
 
         obs, rewards, done, info = env.step(actions=actions)
-        print(obs)
         # print_ep(obs, rewards, done, info)
-        sleep(.6)
+        sleep(.4)
         if ENV == 'CLASSIC':
             env.render(rewards=rewards)
         else:
