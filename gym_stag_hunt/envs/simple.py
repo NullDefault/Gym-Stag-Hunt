@@ -1,8 +1,8 @@
-from numpy.random import randint
 from sys import stdout
 
 from gym import Env
-from gym.spaces import Discrete
+from gym.spaces import Discrete, Box
+from numpy.random import randint
 
 COOPERATE = 0
 DEFECT = 1
@@ -44,8 +44,8 @@ class SimpleEnv(Env):
         self.seed()
 
         # Environment Config
-        self.action_space = Discrete(2)             # cooperate or defect
-        self.observation_space = Discrete(2)        # last agent actions
+        self.action_space = Discrete(2)  # cooperate or defect
+        self.observation_space = Box(low=0, high=1, shape=(2,), dtype=int)  # last agent actions
         self.reward_range = (failed_cooperation_punishment, cooperation_reward)
 
     def step(self, actions):
@@ -101,8 +101,8 @@ class SimpleEnv(Env):
             pass
         else:
             top_right = '  '
-            top_left  = '  '
-            bot_left  = '  '
+            top_left = '  '
+            bot_left = '  '
             bot_right = '  '
 
             if rewards == (self.cooperation_reward, self.cooperation_reward):

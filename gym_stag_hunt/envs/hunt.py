@@ -14,7 +14,6 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
                  enable_multiagent=False,
                  opponent_policy='random',
                  load_renderer=False,
-                 episodes_per_game=1000,
                  stag_follows=True,
                  run_away_after_maul=False,
                  forage_quantity=2,
@@ -26,7 +25,6 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
         :param grid_size: A (W, H) tuple corresponding to the grid dimensions. Although W=H is expected, W!=H works also
         :param screen_size: A (W, H) tuple corresponding to the pixel dimensions of the game window
         :param obs_type: Can be 'image' for pixel-array based observations, or 'coords' for just the entity coordinates
-        :param episodes_per_game: How many timesteps take place before we reset the entity positions.
         :param stag_follows: Should the stag seek out the nearest agent (true) or take a random move (false)
         :param run_away_after_maul: Does the stag stay on the same cell after mauling an agent (true) or respawn (false)
         :param forage_quantity: How many plants will be placed on the board.
@@ -40,8 +38,6 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
         if mauling_punishment == forage_reward:
             raise AttributeError('Mauling punishment and forage reward are equal.'
                                  ' Game logic will not function properly.')
-        if episodes_per_game <= 0:
-            raise AttributeError('Episodes per game is too low. Please provide a positive integer.')
         total_cells = grid_size[0] * grid_size[1]
         if forage_quantity >= total_cells - 3:  # -3 is for the cells occupied by the agents and stag
             raise AttributeError('Forage quantity is too high. The plants will not fit on the grid.')
@@ -63,7 +59,6 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
                              obs_type=obs_type,
                              enable_multiagent=enable_multiagent,
                              load_renderer=load_renderer,
-                             episodes_per_game=episodes_per_game,
                              stag_reward=stag_reward,
                              stag_follows=stag_follows,
                              run_away_after_maul=run_away_after_maul,
@@ -75,6 +70,7 @@ class HuntEnv(AbstractMarkovStagHuntEnv):
         self.action_space = Discrete(5)  # up, down, left, right or stand
 
         if obs_type == 'image':
-            self.observation_space = Box(0, 255, shape=(grid_size[0]*TILE_SIZE, grid_size[1]*TILE_SIZE, 3), dtype=uint8)
+            self.observation_space = Box(0, 255, shape=(grid_size[0] * TILE_SIZE, grid_size[1] * TILE_SIZE, 3),
+                                         dtype=uint8)
         elif obs_type == 'coords':
-            self.observation_space = Box(0, max(grid_size), shape=(6+forage_quantity*2,), dtype=uint8)
+            self.observation_space = Box(0, max(grid_size), shape=(6 + forage_quantity * 2,), dtype=uint8)

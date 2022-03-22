@@ -11,7 +11,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/NullDefault/gym-stag-hunt",
     packages=find_packages(),
-    install_requires=['gym', 'pygame'],
+    install_requires=['gym', 'pygame', 'opencv-python', 'pettingzoo'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

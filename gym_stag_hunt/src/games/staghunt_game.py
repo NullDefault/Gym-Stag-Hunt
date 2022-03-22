@@ -13,7 +13,6 @@ PLANT   = 3
 
 class StagHunt(AbstractGridGame):
     def __init__(self,
-                 episodes_per_game,
                  stag_reward,
                  stag_follows,
                  run_away_after_maul,
@@ -24,7 +23,6 @@ class StagHunt(AbstractGridGame):
                  # Super Class Params
                  window_title, grid_size, screen_size, obs_type, load_renderer, enable_multiagent):
         """
-        :param episodes_per_game: How many timesteps take place before we reset the entity positions.
         :param stag_reward: How much reinforcement the agents get for catching the stag
         :param stag_follows: Should the stag seek out the nearest agent (true) or take a random move (false)
         :param run_away_after_maul: Does the stag stay on the same cell after mauling an agent (true) or respawn (false)
@@ -49,8 +47,6 @@ class StagHunt(AbstractGridGame):
 
         # State Variables
         self._tagged_plants = []                            # harvested plants that need to be re-spawned
-        self._eps_to_go     = episodes_per_game             # state variable to keep track of how many eps till reset
-        self._eps_per_game  = episodes_per_game             # record episodes per game as attribute
 
         # Entity Positions
         self._stag_pos   = zeros(2, dtype=uint8)
@@ -130,8 +126,6 @@ class StagHunt(AbstractGridGame):
                             action according to its established policy.
         :return: observation, rewards, is the game done
         """
-        self._eps_to_go = self._eps_to_go - 1   # decrement reset counter
-
         # Move Entities
         self._move_stag()
         if self._enable_multiagent:
@@ -158,22 +152,16 @@ class StagHunt(AbstractGridGame):
             self._tagged_plants = []
             self.PLANTS = new_plants
 
-        done = self._eps_to_go == 0
-
-        if done:
-            self._eps_to_go = self._eps_per_game
-            self.reset_entities()
-
         obs = self.get_observation()
         info = {}
 
         if self._enable_multiagent:
             if self._obs_type == 'coords':
-                return (obs, self._flip_coord_observation_perspective(obs)), iteration_rewards, done, info
+                return (obs, self._flip_coord_observation_perspective(obs)), iteration_rewards, False, info
             else:
-                return (obs, obs), iteration_rewards, done, info
+                return (obs, obs), iteration_rewards, False, info
         else:
-            return obs, iteration_rewards[0], done, info
+            return obs, iteration_rewards[0], False, info
 
     def _coord_observation(self):
         """
