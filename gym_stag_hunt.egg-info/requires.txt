@@ -1,2 +1,4 @@
 gym
 pygame
+opencv-python
+pettingzoo

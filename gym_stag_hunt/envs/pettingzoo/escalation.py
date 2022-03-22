@@ -5,9 +5,9 @@ from gym_stag_hunt.envs.pettingzoo.shared import default_wrappers, PettingZooEnv
 
 
 def env(grid_size=(5, 5), screen_size=(600, 600), obs_type='image', enable_multiagent=False, opponent_policy='pursuit',
-        load_renderer=False, streak_break_punishment_factor=0.5, max_time_steps=100, obs_shape=(42, 42)):
+        load_renderer=False, streak_break_punishment_factor=0.5, obs_shape=(42, 42)):
     env_init = ZooEscalationEnvironment(grid_size, screen_size, obs_type, enable_multiagent, opponent_policy,
-                                        load_renderer, streak_break_punishment_factor, max_time_steps, obs_shape)
+                                        load_renderer, streak_break_punishment_factor, obs_shape)
     return default_wrappers(env_init)
 
 
@@ -19,7 +19,7 @@ class ZooEscalationEnvironment(PettingZooEnv):
 
     def __init__(self, grid_size=(5, 5), screen_size=(600, 600), obs_type='image', enable_multiagent=False,
                  opponent_policy='pursuit', load_renderer=False, streak_break_punishment_factor=0.5,
-                 max_time_steps=100, obs_shape=(42, 42)):
+                 obs_shape=(42, 42)):
         escalation_env = EscalationEnv(grid_size, screen_size, obs_type, enable_multiagent, opponent_policy,
                                        load_renderer, streak_break_punishment_factor)
-        super().__init__(og_env=escalation_env, max_time_steps=max_time_steps, obs_shape=obs_shape)
+        super().__init__(og_env=escalation_env, obs_shape=obs_shape)

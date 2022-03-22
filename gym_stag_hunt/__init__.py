@@ -19,3 +19,18 @@ register(
     id='StagHunt-Escalation-v0',
     entry_point='gym_stag_hunt.envs:EscalationEnv'
 )
+
+register(
+    id='StagHunt-Hunt-PZ-v0',
+    entry_point='gym_stag_hunt.envs:HuntPZEnv'
+)
+
+register(
+    id='StagHunt-Harvest-PZ-v0',
+    entry_point='gym_stag_hunt.envs:HarvestPZEnv'
+)
+
+register(
+    id='StagHunt-Escalation-PZ-v0',
+    entry_point='gym_stag_hunt.envs:EscalationPZEnv'
+)
