@@ -18,7 +18,7 @@ if __name__ == "__main__":
         actions = {agent: env.action_spaces[agent].sample() for agent in env.agents}
         obs, rewards, done, info = env.step(actions)
         print_ep(obs, rewards, done, info)
+        print(rewards)
         sleep(.4)
-        env.render(mode='human')
     env.close()
     quit()
