@@ -1,6 +1,6 @@
 from abc import ABC
 
-from numpy import zeros, uint8, array, inf
+from numpy import zeros, uint8, array
 from numpy.random import choice
 
 # Possible Moves

@@ -1,7 +1,6 @@
 from itertools import product
 from random import choice
 from sys import stdout
-from typing import Tuple
 
 from numpy import all, full, zeros, uint8
 
