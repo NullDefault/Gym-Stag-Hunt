@@ -9,13 +9,14 @@ DEFECT = 1
 
 
 class SimpleEnv(Env):
-    def __init__(self,
-                 cooperation_reward=5,
-                 defect_alone_reward=1,
-                 defect_together_reward=1,
-                 failed_cooperation_punishment=-5,
-                 eps_per_game=1
-                 ):
+    def __init__(
+        self,
+        cooperation_reward=5,
+        defect_alone_reward=1,
+        defect_together_reward=1,
+        failed_cooperation_punishment=-5,
+        eps_per_game=1,
+    ):
         """
         :param cooperation_reward: How much reinforcement the agents get for catching the stag
         :param defect_alone_reward: How much reinforcement an agent gets for defecting if the other one doesn't
@@ -25,9 +26,16 @@ class SimpleEnv(Env):
                              the sake of convenience.
         """
 
-        if not (cooperation_reward > defect_alone_reward >= defect_together_reward > failed_cooperation_punishment):
-            raise AttributeError('The game does not qualify as a Stag Hunt, please change parameters so that '
-                                 'stag_reward > forage_reward_single >= forage_reward_both > mauling_punishment')
+        if not (
+            cooperation_reward
+            > defect_alone_reward
+            >= defect_together_reward
+            > failed_cooperation_punishment
+        ):
+            raise AttributeError(
+                "The game does not qualify as a Stag Hunt, please change parameters so that "
+                "stag_reward > forage_reward_single >= forage_reward_both > mauling_punishment"
+            )
 
         super(SimpleEnv, self).__init__()
 
@@ -45,7 +53,9 @@ class SimpleEnv(Env):
 
         # Environment Config
         self.action_space = Discrete(2)  # cooperate or defect
-        self.observation_space = Box(low=0, high=1, shape=(2,), dtype=int)  # last agent actions
+        self.observation_space = Box(
+            low=0, high=1, shape=(2,), dtype=int
+        )  # last agent actions
         self.reward_range = (failed_cooperation_punishment, cooperation_reward)
 
     def step(self, actions):
@@ -75,11 +85,17 @@ class SimpleEnv(Env):
         b_cooperated = b_action == COOPERATE
 
         if a_action == COOPERATE:
-            reward = (self.cooperation_reward, self.cooperation_reward) if b_cooperated \
+            reward = (
+                (self.cooperation_reward, self.cooperation_reward)
+                if b_cooperated
                 else (self.failed_cooperation_punishment, self.defect_alone_reward)
+            )
         else:
-            reward = (self.defect_alone_reward, self.failed_cooperation_punishment) if b_cooperated \
+            reward = (
+                (self.defect_alone_reward, self.failed_cooperation_punishment)
+                if b_cooperated
                 else (self.defect_together_reward, self.defect_together_reward)
+            )
 
         obs = (a_action, b_action)
 
@@ -100,32 +116,38 @@ class SimpleEnv(Env):
             print("Please supply rewards to render.")
             pass
         else:
-            top_right = '  '
-            top_left = '  '
-            bot_left = '  '
-            bot_right = '  '
+            top_right = "  "
+            top_left = "  "
+            bot_left = "  "
+            bot_right = "  "
 
             if rewards == (self.cooperation_reward, self.cooperation_reward):
-                top_left = 'AB'
-            elif rewards == (self.defect_alone_reward, self.failed_cooperation_punishment):
-                bot_left = 'A '
-                top_right = ' B'
-            elif rewards == (self.failed_cooperation_punishment, self.defect_alone_reward):
-                top_left = 'A '
-                top_right = ' B'
+                top_left = "AB"
+            elif rewards == (
+                self.defect_alone_reward,
+                self.failed_cooperation_punishment,
+            ):
+                bot_left = "A "
+                top_right = " B"
+            elif rewards == (
+                self.failed_cooperation_punishment,
+                self.defect_alone_reward,
+            ):
+                top_left = "A "
+                top_right = " B"
             elif rewards == (self.defect_together_reward, self.defect_together_reward):
-                bot_right = 'AB'
+                bot_right = "AB"
 
-            stdout.write('\n\n\n')
-            stdout.write('      B   \n')
-            stdout.write('    C   D \n')
-            stdout.write('   ╔══╦══╗\n')
-            stdout.write(' C ║' + top_left + '║' + top_right + '║\n')
-            stdout.write('   ║  ║  ║\n')
-            stdout.write('A  ╠══╬══╣\n')
-            stdout.write('   ║  ║  ║\n')
-            stdout.write(' D ║' + bot_left + '║' + bot_right + '║\n')
-            stdout.write('   ╚══╩══╝\n\r')
+            stdout.write("\n\n\n")
+            stdout.write("      B   \n")
+            stdout.write("    C   D \n")
+            stdout.write("   ╔══╦══╗\n")
+            stdout.write(" C ║" + top_left + "║" + top_right + "║\n")
+            stdout.write("   ║  ║  ║\n")
+            stdout.write("A  ╠══╬══╣\n")
+            stdout.write("   ║  ║  ║\n")
+            stdout.write(" D ║" + bot_left + "║" + bot_right + "║\n")
+            stdout.write("   ╚══╩══╝\n\r")
             stdout.flush()
 
     def close(self):

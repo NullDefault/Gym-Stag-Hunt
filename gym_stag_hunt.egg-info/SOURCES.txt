@@ -4,6 +4,7 @@ gym_stag_hunt/__init__.py
 gym_stag_hunt/demos.py
 gym_stag_hunt/env_checker.py
 gym_stag_hunt/petting_zoo_demos.py
+gym_stag_hunt/pz_env_checker.py
 gym_stag_hunt.egg-info/PKG-INFO
 gym_stag_hunt.egg-info/SOURCES.txt
 gym_stag_hunt.egg-info/dependency_links.txt

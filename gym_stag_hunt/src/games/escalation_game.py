@@ -13,16 +13,28 @@ MARK = 2
 
 
 class Escalation(AbstractGridGame):
-    def __init__(self,
-                 streak_break_punishment_factor, opponent_policy,
-                 # Super Class Params
-                 window_title, grid_size, screen_size, obs_type, load_renderer, enable_multiagent):
+    def __init__(
+        self,
+        streak_break_punishment_factor,
+        opponent_policy,
+        # Super Class Params
+        window_title,
+        grid_size,
+        screen_size,
+        obs_type,
+        load_renderer,
+        enable_multiagent,
+    ):
         """
         :param streak_break_punishment_factor: Negative reinforcement for breaking the streak
         """
 
-        super(Escalation, self).__init__(grid_size=grid_size, screen_size=screen_size, obs_type=obs_type,
-                                         enable_multiagent=enable_multiagent)
+        super(Escalation, self).__init__(
+            grid_size=grid_size,
+            screen_size=screen_size,
+            obs_type=obs_type,
+            enable_multiagent=enable_multiagent,
+        )
 
         self._streak_break_punishment_factor = streak_break_punishment_factor
         self._opponent_policy = opponent_policy
@@ -32,10 +44,15 @@ class Escalation(AbstractGridGame):
         self.reset_entities()
 
         # If rendering is enabled, we will instantiate the rendering pipeline
-        if obs_type == 'image' or load_renderer:
+        if obs_type == "image" or load_renderer:
             # we don't want to import pygame if we aren't going to use it, so that's why this import is here
-            from gym_stag_hunt.src.renderers.escalation_renderer import EscalationRenderer
-            self._renderer = EscalationRenderer(game=self, window_title=window_title, screen_size=screen_size)
+            from gym_stag_hunt.src.renderers.escalation_renderer import (
+                EscalationRenderer,
+            )
+
+            self._renderer = EscalationRenderer(
+                game=self, window_title=window_title, screen_size=screen_size
+            )
 
     def _calc_reward(self):
         """
@@ -76,10 +93,17 @@ class Escalation(AbstractGridGame):
         if self._enable_multiagent:
             self._move_agents(agent_moves=agent_moves)
         else:
-            if self._opponent_policy == 'random':
-                self._move_agents(agent_moves=[agent_moves, self._random_move(self.B_AGENT)])
-            elif self._opponent_policy == 'pursuit':
-                self._move_agents(agent_moves=[agent_moves, self._seek_entity(self.B_AGENT, self.MARK)])
+            if self._opponent_policy == "random":
+                self._move_agents(
+                    agent_moves=[agent_moves, self._random_move(self.B_AGENT)]
+                )
+            elif self._opponent_policy == "pursuit":
+                self._move_agents(
+                    agent_moves=[
+                        agent_moves,
+                        self._seek_entity(self.B_AGENT, self.MARK),
+                    ]
+                )
 
         iteration_rewards = self._calc_reward()
         obs = self.get_observation()
@@ -87,8 +111,13 @@ class Escalation(AbstractGridGame):
         done = False
 
         if self._enable_multiagent:
-            if self._obs_type == 'coords':
-                return (obs, self._flip_coord_observation_perspective(obs)), iteration_rewards, done, info
+            if self._obs_type == "coords":
+                return (
+                    (obs, self._flip_coord_observation_perspective(obs)),
+                    iteration_rewards,
+                    done,
+                    info,
+                )
             else:
                 return (obs, obs), iteration_rewards, done, info
         else:
@@ -131,8 +160,8 @@ class Escalation(AbstractGridGame):
     @property
     def ENTITY_POSITIONS(self):
         return {
-            'a_agent': self.A_AGENT,
-            'b_agent': self.B_AGENT,
-            'mark': self.MARK,
-            'streak_active': self.STREAK_ACTIVE
+            "a_agent": self.A_AGENT,
+            "b_agent": self.B_AGENT,
+            "mark": self.MARK,
+            "streak_active": self.STREAK_ACTIVE,
         }
