@@ -27,19 +27,27 @@ class PettingZooEnv(ParallelEnv):
         self.possible_agents = ["player_" + str(n) for n in range(2)]
         self.agents = self.possible_agents[:]
 
-        self.agent_name_mapping = dict(zip(self.possible_agents, list(range(len(self.possible_agents)))))
+        self.agent_name_mapping = dict(
+            zip(self.possible_agents, list(range(len(self.possible_agents))))
+        )
         self.agent_selection = None
         self._agent_selector = agent_selector(self.agents)
 
-        self._action_spaces = {agent: self.env.action_space for agent in self.possible_agents}
-        self._observation_spaces = {agent: self.env.observation_space for agent in self.possible_agents}
+        self._action_spaces = {
+            agent: self.env.action_space for agent in self.possible_agents
+        }
+        self._observation_spaces = {
+            agent: self.env.observation_space for agent in self.possible_agents
+        }
 
         self.dones = dict(zip(self.agents, [False for _ in self.agents]))
         self.rewards = dict(zip(self.agents, [0.0 for _ in self.agents]))
         self._cumulative_rewards = dict(zip(self.agents, [0.0 for _ in self.agents]))
         self.infos = dict(zip(self.agents, [{} for _ in self.agents]))
         self.accumulated_actions = []
-        self.current_observations = {agent: self.env.observation_space.sample() for agent in self.agents}
+        self.current_observations = {
+            agent: self.env.observation_space.sample() for agent in self.agents
+        }
         self.t = 0
         self.last_rewards = [0.0, 0.0]
 
@@ -53,7 +61,7 @@ class PettingZooEnv(ParallelEnv):
     def action_space(self, agent):
         return self.env.action_space
 
-    def render(self, mode='human'):
+    def render(self, mode="human"):
         self.env.render(mode)
 
     def close(self):

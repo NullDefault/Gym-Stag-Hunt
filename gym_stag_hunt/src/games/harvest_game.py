@@ -12,14 +12,21 @@ M_PLANT = 3
 
 
 class Harvest(AbstractGridGame):
-    def __init__(self,
-                 max_plants,
-                 chance_to_mature,
-                 chance_to_die,
-                 young_reward,
-                 mature_reward,
-                 # Super Class Params
-                 window_title, grid_size, screen_size, obs_type, load_renderer, enable_multiagent):
+    def __init__(
+        self,
+        max_plants,
+        chance_to_mature,
+        chance_to_die,
+        young_reward,
+        mature_reward,
+        # Super Class Params
+        window_title,
+        grid_size,
+        screen_size,
+        obs_type,
+        load_renderer,
+        enable_multiagent,
+    ):
         """
         :param max_plants: What is the maximum number of plants that can be on the board.
         :param chance_to_mature: What chance does a young plant have to mature each time step.
@@ -28,8 +35,12 @@ class Harvest(AbstractGridGame):
         :param mature_reward: Reward for harvesting a mature plant (awarded to both agents)
         """
 
-        super(Harvest, self).__init__(grid_size=grid_size, screen_size=screen_size, obs_type=obs_type,
-                                      enable_multiagent=enable_multiagent)
+        super(Harvest, self).__init__(
+            grid_size=grid_size,
+            screen_size=screen_size,
+            obs_type=obs_type,
+            enable_multiagent=enable_multiagent,
+        )
 
         # Game Config
         self._max_plants = max_plants
@@ -47,10 +58,13 @@ class Harvest(AbstractGridGame):
         self.reset_entities()  # place the entities on the grid
 
         # If rendering is enabled, we will instantiate the rendering pipeline
-        if obs_type == 'image' or load_renderer:
+        if obs_type == "image" or load_renderer:
             # we don't want to import pygame if we aren't going to use it, so that's why this import is here
             from gym_stag_hunt.src.renderers.harvest_renderer import HarvestRenderer
-            self._renderer = HarvestRenderer(game=self, window_title=window_title, screen_size=screen_size)
+
+            self._renderer = HarvestRenderer(
+                game=self, window_title=window_title, screen_size=screen_size
+            )
 
     """
     Collision Logic
@@ -111,7 +125,9 @@ class Harvest(AbstractGridGame):
         if self._enable_multiagent:
             self._move_agents(agent_moves=agent_moves)
         else:
-            self._move_agents(agent_moves=[agent_moves, self._random_move(self.B_AGENT)])
+            self._move_agents(
+                agent_moves=[agent_moves, self._random_move(self.B_AGENT)]
+            )
 
         for idx, plant in enumerate(self._plants):
             is_mature = self._maturity_flags[idx]
@@ -127,8 +143,12 @@ class Harvest(AbstractGridGame):
         iteration_rewards = self._calc_reward()
 
         if len(self._tagged_plants) > 0:
-            self._plants = respawn_plants(plants=self.PLANTS, tagged_plants=self._tagged_plants,
-                                          grid_dims=self.GRID_DIMENSIONS, used_coordinates=self.AGENTS)
+            self._plants = respawn_plants(
+                plants=self.PLANTS,
+                tagged_plants=self._tagged_plants,
+                grid_dims=self.GRID_DIMENSIONS,
+                used_coordinates=self.AGENTS,
+            )
             self._tagged_plants = []
 
         obs = self.get_observation()
@@ -136,8 +156,13 @@ class Harvest(AbstractGridGame):
         info = {}
 
         if self._enable_multiagent:
-            if self._obs_type == 'coords':
-                return (obs, self._flip_coord_observation_perspective(obs)), iteration_rewards, done, info
+            if self._obs_type == "coords":
+                return (
+                    (obs, self._flip_coord_observation_perspective(obs)),
+                    iteration_rewards,
+                    done,
+                    info,
+                )
             else:
                 return (obs, obs), iteration_rewards, done, info
         else:
@@ -152,7 +177,11 @@ class Harvest(AbstractGridGame):
         maturity_flags = self.MATURITY_FLAGS
         for idx, element in enumerate(self.PLANTS):
             new_entry = [0, 0, 0]
-            new_entry[0], new_entry[1], new_entry[2] = element[0], element[1], int(maturity_flags[idx])
+            new_entry[0], new_entry[1], new_entry[2] = (
+                element[0],
+                element[1],
+                int(maturity_flags[idx]),
+            )
             shipback = shipback + new_entry
 
         return array(shipback).flatten()
@@ -163,8 +192,11 @@ class Harvest(AbstractGridGame):
         :return:
         """
         self._reset_agents()
-        self._plants = spawn_plants(grid_dims=self.GRID_DIMENSIONS, how_many=self._max_plants,
-                                    used_coordinates=self.AGENTS)
+        self._plants = spawn_plants(
+            grid_dims=self.GRID_DIMENSIONS,
+            how_many=self._max_plants,
+            used_coordinates=self.AGENTS,
+        )
         self._maturity_flags = [False] * self._max_plants
 
     """
@@ -182,8 +214,8 @@ class Harvest(AbstractGridGame):
     @property
     def ENTITY_POSITIONS(self):
         return {
-            'a_agent': self.A_AGENT,
-            'b_agent': self.B_AGENT,
-            'plant_coords': self.PLANTS,
-            'maturity_flags': self.MATURITY_FLAGS
+            "a_agent": self.A_AGENT,
+            "b_agent": self.B_AGENT,
+            "plant_coords": self.PLANTS,
+            "maturity_flags": self.MATURITY_FLAGS,
         }

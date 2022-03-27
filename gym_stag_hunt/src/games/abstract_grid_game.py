@@ -12,11 +12,7 @@ STAND = 4
 
 
 class AbstractGridGame(ABC):
-    def __init__(self,
-                 grid_size,
-                 screen_size,
-                 obs_type,
-                 enable_multiagent):
+    def __init__(self, grid_size, screen_size, obs_type, enable_multiagent):
         """
         :param grid_size: A (W, H) tuple corresponding to the grid dimensions. Although W=H is expected, W!=H works also
         :param screen_size: A (W, H) tuple corresponding to the pixel dimensions of the game window
@@ -24,7 +20,9 @@ class AbstractGridGame(ABC):
         :param enable_multiagent: Boolean signifying if the env will be used to train multiple agents or one.
         """
         if screen_size[0] * screen_size[1] == 0:
-            raise AttributeError("Screen size is too small. Please provide larger screen size.")
+            raise AttributeError(
+                "Screen size is too small. Please provide larger screen size."
+            )
 
         # Config
         self._renderer = None  # placeholder renderer
@@ -32,7 +30,9 @@ class AbstractGridGame(ABC):
         self._grid_size = grid_size  # record grid dimensions as attribute
         self._enable_multiagent = enable_multiagent
 
-        self._a_pos = zeros(2, dtype=uint8)  # create empty coordinate tuples for the agents
+        self._a_pos = zeros(
+            2, dtype=uint8
+        )  # create empty coordinate tuples for the agents
         self._b_pos = zeros(2, dtype=uint8)
 
     """
@@ -43,7 +43,11 @@ class AbstractGridGame(ABC):
         """
         :return: observation of the current game state
         """
-        return self.RENDERER.update() if self._obs_type == 'image' else self._coord_observation()
+        return (
+            self.RENDERER.update()
+            if self._obs_type == "image"
+            else self._coord_observation()
+        )
 
     def _coord_observation(self):
         return array(self.AGENTS)
@@ -77,7 +81,7 @@ class AbstractGridGame(ABC):
             DOWN: self._move_down,
             RIGHT: self._move_right,
             UP: self._move_up,
-            STAND: self._stand
+            STAND: self._stand,
         }
 
     def _move_entity(self, entity_pos, action):
