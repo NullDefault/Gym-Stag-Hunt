@@ -1,7 +1,7 @@
 from gym.spaces import Discrete, Box
 from numpy import uint8
 
-from gym_stag_hunt.envs.abstract_markov_staghunt import AbstractMarkovStagHuntEnv
+from gym_stag_hunt.envs.gym.abstract_markov_staghunt import AbstractMarkovStagHuntEnv
 from gym_stag_hunt.src.entities import TILE_SIZE
 from gym_stag_hunt.src.games.staghunt_game import StagHunt
 

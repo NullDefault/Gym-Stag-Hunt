@@ -1,9 +1,9 @@
 from time import sleep
 
-from gym_stag_hunt.envs.escalation import EscalationEnv
-from gym_stag_hunt.envs.harvest import HarvestEnv
-from gym_stag_hunt.envs.hunt import HuntEnv
-from gym_stag_hunt.envs.simple import SimpleEnv
+from gym_stag_hunt.envs.gym.escalation import EscalationEnv
+from gym_stag_hunt.envs.gym.harvest import HarvestEnv
+from gym_stag_hunt.envs.gym.hunt import HuntEnv
+from gym_stag_hunt.envs.gym.simple import SimpleEnv
 from gym_stag_hunt.src.games.abstract_grid_game import UP, LEFT, DOWN, RIGHT, STAND
 
 ENVS = {

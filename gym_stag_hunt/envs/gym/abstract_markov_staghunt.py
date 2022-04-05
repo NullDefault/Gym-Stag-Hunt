@@ -33,7 +33,6 @@ class AbstractMarkovStagHuntEnv(Env, ABC):
         self.obs_type = obs_type
         self.done = False
         self.enable_multiagent = enable_multiagent
-        self.seed()
 
     def step(self, actions):
         """

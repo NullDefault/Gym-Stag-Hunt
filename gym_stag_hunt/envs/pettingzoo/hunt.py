@@ -1,5 +1,5 @@
-from gym_stag_hunt.envs.hunt import HuntEnv
-from gym_stag_hunt.envs.pettingzoo.shared import default_wrappers, PettingZooEnv
+from gym_stag_hunt.envs.gym.hunt import HuntEnv
+from gym_stag_hunt.envs.pettingzoo.shared import PettingZooEnv
 from pettingzoo.utils import parallel_to_aec
 
 
