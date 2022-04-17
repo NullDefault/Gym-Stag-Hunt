@@ -1,6 +1,69 @@
 # Gym Stag Hunt
 
-This project is an implementation of various Stag Hunt games for Open AI Gym. Besides the simple matrix form Stag Hunt, the repository includes 3 different multi-agent grid-based stochastic games as described in this [paper](https://arxiv.org/abs/1709.02865). The core goal of the project is to offer a robust, efficient, and customizable environment for exploring prosocial behavior in multi agent reinforcement learning. Feedback and requests for features are welcome.
+This project is an implementation of various Stag Hunt-like environments for Open AI Gym and PettingZoo. Besides the simple matrix form Stag Hunt, the repository includes 3 different multi-agent grid-based stochastic games as described in this [paper](https://arxiv.org/abs/1709.02865). The core goal of the project is to offer a robust, efficient, and customizable environment for exploring prosocial behavior in multi-agent reinforcement learning. Feedback and requests for features are welcome.
+
+---
+# Minimal Example
+```python
+import gym
+import gym_stag_hunt
+import time
+
+env = gym.make("StagHunt-Hunt-v0", obs_type='image', ...) # you can pass config parameters here
+env.reset()
+for iteration in range(1000):
+  time.sleep(.2)
+  obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
+  env.render()
+env.close()
+```
+
+# PettingZoo environment with Ray RLLib
+
+```python
+import gym 
+import gym_stag_hunt
+from ray import tune
+from ray.rllib.env.wrappers.pettingzoo_env import PettingZooEnv
+from gym_stag_hunt.envs.pettingzoo.hunt import raw_env
+
+if __name__ == "__main__":
+    def env_creator(args):
+        return PettingZooEnv(raw_env(**args))
+
+    tune.register_env("StagHunt-Hunt-PZ-v0", env_creator)
+
+    model = tune.run(
+        "DQN",
+        name="stag_hunt",
+        stop={"episodes_total": 10000},
+        checkpoint_freq=100,
+        checkpoint_at_end=True,
+        config={
+            "horizon": 100,
+            "framework": "tf2",
+            # Environment specific
+            "env": "StagHunt-Hunt-PZ-v0",
+            # General
+            "num_workers": 2, 
+            # Method specific
+            "multiagent": {
+                "policies": {"player_0", "player_1"},
+                "policy_mapping_fn": (lambda agent_id, episode, **kwargs: agent_id),
+                "policies_to_train": ["player_0", "player_1"]
+            },
+            # Env Specific
+            "env_config": {
+                "obs_type": "coords",
+                "forage_reward": 1.0,
+                "stag_reward": 5.0,
+                "stag_follows": True,
+                "mauling_punishment": -.5,
+                "enable_multiagent": True,
+            }
+        }
+    )
+```
 
 ---
 
@@ -202,28 +265,3 @@ Two agents start off in the top two corners of a ```grid_size[0]``` x ```grid_si
 > The factor for calculating the negative reinforcement.
 
 ---
-
-# Installation
-
-After cloning the repository:
-
-```bash
-cd Gym-Stag-Hunt
-pip install -e .
-```
-
-# Minimal Example
-```
-import gym
-import gym_stag_hunt
-import time
-
-env = gym.make("StagHunt-Hunt-v0", obs_type='image', ...) # you can pass config parameters here
-env.reset()
-for iteration in range(1000):
-  time.sleep(.2)
-  obs, rewards, done, info = env.step([env.action_space.sample(), env.action_space.sample()])
-  env.render()
-env.close()
-```
-
