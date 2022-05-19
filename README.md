@@ -4,6 +4,18 @@ This project is an implementation of various Stag Hunt-like environments for Ope
 
 Developed as part of my honors BSC senior [thesis](https://digitalcollections.drew.edu/UniversityArchives/ThesesAndDissertations/CLA/BA/2022/Nesterov-Rappoport/) at Drew University. Feel free to check it out!
 
+If you end up using this in your work, please reference it with:
+```
+ @techreport{
+  nesterov-rappoport_2022,
+  title       = "The Evolution of Trust: Understanding Prosocial Behavior in Multi-Agent Reinforcement Learning Systems",
+  author      = "Nesterov-Rappoport, David Lvovich",
+  year        = "2022",
+  institution = "Drew University",
+  address     = "Madison, NJ",
+  month       = may
+}
+ ```
 ---
 # Minimal Example
 ```python
