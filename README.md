@@ -2,6 +2,8 @@
 
 This project is an implementation of various Stag Hunt-like environments for Open AI Gym and PettingZoo. Besides the simple matrix form Stag Hunt, the repository includes 3 different multi-agent grid-based stochastic games as described in this [paper](https://arxiv.org/abs/1709.02865). The core goal of the project is to offer a robust, efficient, and customizable environment for exploring prosocial behavior in multi-agent reinforcement learning. Feedback and requests for features are welcome.
 
+Developed as part of my senior [thesis](https://digitalcollections.drew.edu/UniversityArchives/ThesesAndDissertations/CLA/BA/2022/Nesterov-Rappoport/). Feel free to check it out!
+
 ---
 # Minimal Example
 ```python
